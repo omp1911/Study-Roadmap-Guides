@@ -1,61 +1,84 @@
 # Setup
 
-One Docker container for all four guides. Python, JavaScript, TypeScript, Spark, a browser IDE and notebooks — nothing on your laptop except Docker.
+Follow these 12 steps in order. After each one there is a **You should see** box. If what you see matches, go to the next step. If it does not match, go to [Step 12](#step-12--if-something-goes-wrong).
 
-**Time:** ten minutes, most of it waiting for downloads.  
-**You need:** Docker Desktop (macOS/Windows) or Docker Engine + Compose plugin (Linux).
-
----
-
-## How to use this guide
-
-Do this once. Every other guide assumes it's finished and starts at concept 1.
-
-| Where you work | Address | Good for |
-|---|---|---|
-| **IDE** | `http://localhost:8443` | Everything. Real VS Code — editor, file tree, terminal, notebooks, debugger. |
-| **Notebooks** | `http://localhost:8888` | JupyterLab, if you prefer it to the IDE's notebook view. |
-| **Shell** | `docker compose exec lab bash` | When you'd rather type than click. |
-| **dbt docs** | `http://localhost:8080` | Guide 6's lineage graph, once you run `dbt docs serve`. |
-
-Three doors, one room. Same files, same Python, same Node.
-
-**Two rules that make the rest of this painless:**
-
-1. **To add a Python library**, add a line to `requirements.txt`. To add a JS one, add it to `package.json`. Then `docker compose restart lab`. Never edit `docker-compose.yml` for this.
-2. **Your files are never at risk.** They live in your folder on your laptop; the container just looks at them. Restart, rebuild, `down -v`, delete the image — notebooks, databases and code are untouched.
-
-**Guide 4 (Foundry)** runs in your own Foundry workspace, not here.
+You only do this once. It takes about 15 minutes.
 
 ---
 
-## Contents
+## What you are building
 
-| # | Step | What you'll have after it |
-|---|---|---|
-| 1 | [Get the files in one folder](#1-get-the-files-in-one-folder) | A working folder Docker can see |
-| 2 | [Start the container](#2-start-the-container) | Everything installed, IDE and notebooks live |
-| 3 | [Adding libraries later](#3-adding-libraries-later) | The one workflow you'll use constantly |
-| 4 | [The IDE](#4-the-ide) | A Codespaces-like editor, already configured |
-| 5 | [JavaScript and TypeScript](#5-javascript-and-typescript) | A real TS project with watch mode and type-checking |
-| 6 | [Seed the toy shop database](#6-seed-the-toy-shop-database) | `shop.duckdb` for guide 1 |
-| 7 | [Create the etl-practice project](#7-create-the-etl-practice-project) | The layout guide 3 tests against |
-| 8 | [The warehouse and dbt](#8-the-warehouse-and-dbt) | Landing files for guides 5 and 6 |
-| 9 | [Daily commands](#9-daily-commands) | The handful you'll actually use |
-| 10 | [Troubleshooting](#10-troubleshooting) | Fixes for the things that go wrong |
+One Docker container that holds everything you need:
+
+```
+   YOUR COMPUTER                    THE CONTAINER
+   ┌──────────────────┐         ┌──────────────────────────────┐
+   │  your folder     │◀───────▶│  Python   Node   TypeScript  │
+   │  (your files)    │  shared │  Spark    dbt    DuckDB      │
+   └──────────────────┘         │  an editor you open in your  │
+                                │  web browser                 │
+                                └──────────────────────────────┘
+```
+
+You do not install Python, Node or Java on your computer. Only Docker.
+
+**Your files always stay on your computer.** The container just reads them. Nothing in this guide can delete your work.
 
 ---
 
-## 1. Get the files in one folder
+## Steps
 
-Everything in one folder. That folder becomes `/work` inside the container.
+| Step | What you do |
+|---|---|
+| [1](#step-1--install-docker) | Install Docker |
+| [2](#step-2--put-the-files-in-one-folder) | Put the files in one folder |
+| [3](#step-3--start-the-container) | Start the container |
+| [4](#step-4--wait-for-the-ready-message) | Wait for the READY message |
+| [5](#step-5--open-the-editor-in-your-browser) | Open the editor in your browser |
+| [6](#step-6--open-a-terminal-inside-the-editor) | Open a terminal inside the editor |
+| [7](#step-7--check-that-everything-is-installed) | Check that everything is installed |
+| [8](#step-8--make-the-toy-shop-database) | Make the toy shop database |
+| [9](#step-9--make-the-test-project-folder) | Make the test project folder |
+| [10](#step-10--check-the-warehouse-files) | Check the warehouse files |
+| [11](#step-11--try-typescript) | Try TypeScript |
+| [12](#step-12--if-something-goes-wrong) | If something goes wrong |
+
+---
+
+## Step 1 — Install Docker
+
+Go to [docker.com](https://www.docker.com/products/docker-desktop/) and install **Docker Desktop**. On Linux, install Docker Engine and the Compose plugin instead.
+
+Start Docker Desktop and wait until it says it is running.
+
+Then open a terminal on your computer and type:
+
+```bash
+docker --version
+docker compose version
+```
+
+**You should see** two version numbers, like this:
+
+```
+Docker version 27.3.1, build ce12230
+Docker Compose version v2.29.7
+```
+
+**If `docker compose version` gives an error**, try `docker-compose --version` instead. If that works, you have an older Docker. Everything below still works — just type `docker-compose` where this guide says `docker compose`.
+
+---
+
+## Step 2 — Put the files in one folder
+
+Make a folder anywhere you like. Put all 10 files inside it:
 
 ```
 de-practice/
-├── docker-compose.yml       ← you rarely touch this
-├── requirements.txt         ← Python libraries. edit freely.
-├── package.json             ← JS/TS libraries. edit freely.
-├── 00-setup.md
+├── docker-compose.yml       ← starts everything. you will not edit this.
+├── requirements.txt         ← list of Python libraries
+├── package.json             ← list of JavaScript libraries
+├── 00-setup.md              ← this file
 ├── 01-data-modelling.md
 ├── 02-python-async-regex-patterns.md
 ├── 03-pytest-for-etl.md
@@ -64,26 +87,52 @@ de-practice/
 └── 06-dbt-basics.md
 ```
 
+Now go into that folder in your terminal:
+
 ```bash
-cd de-practice
-docker --version          # any 24.x or newer
-docker compose version    # must say "Docker Compose version v2..."
+cd path/to/de-practice
+ls
 ```
 
-> **Trap.** If `docker compose version` fails but `docker-compose --version` works, you have the old standalone v1. Everything below still works — write `docker-compose` in place of `docker compose`.
+**You should see** all 10 file names listed.
+
+**This folder matters.** Every `docker compose` command in this guide must be typed while you are inside it. If a command says "not found", check where you are with `pwd`.
 
 ---
 
-## 2. Start the container
+## Step 3 — Start the container
+
+Type this:
 
 ```bash
 docker compose up -d
+```
+
+**You should see** something like:
+
+```
+[+] Running 2/2
+ ✔ Network de-practice_default  Created
+ ✔ Container de-lab             Started
+```
+
+This means Docker started it. It does **not** mean it is ready yet — that is the next step.
+
+**The first time is slow.** Docker downloads Python, then installs Java, Node, dbt, the editor and all the libraries. Expect **5 to 8 minutes**. Every time after this, it takes about 10 seconds.
+
+---
+
+## Step 4 — Wait for the READY message
+
+Type this to watch what it is doing:
+
+```bash
 docker compose logs -f lab
 ```
 
-First run: **five to eight minutes.** It downloads Python, then installs Java, Node, everything in `requirements.txt`, everything in `package.json`, the TypeScript toolchain, the IDE and its extensions. All of that lands in Docker volumes, so later starts take about ten seconds.
+Lines will scroll past — installing Java, installing Python libraries, and so on. This is normal. Wait.
 
-Watch for this, then `Ctrl-C` to stop tailing:
+**You should see** this at the end:
 
 ```
 [lab] READY
@@ -92,121 +141,94 @@ Watch for this, then `Ctrl-C` to stop tailing:
         Shell      docker compose exec lab bash
 ```
 
-Open `http://localhost:8443`. That's your workspace.
+When you see `READY`, press **Ctrl-C**. That stops the scrolling text. It does **not** stop the container.
 
-### Check it
+**If it stops before READY** and shows a red error, read the last few lines. It is usually an internet problem during download. Type `docker compose restart lab` and it will try again.
 
-In the IDE's terminal (*Terminal → New Terminal*):
+---
+
+## Step 5 — Open the editor in your browser
+
+Open your web browser and go to:
+
+```
+http://localhost:8443
+```
+
+**You should see** Visual Studio Code, running inside your browser. On the left is a file list showing your 10 files.
+
+This is where you will do most of your work. It is a real code editor — not a website that looks like one.
+
+**Nobody else can open this.** It is locked to your own computer, so there is no password. It will not work from your phone or another machine, and that is on purpose.
+
+---
+
+## Step 6 — Open a terminal inside the editor
+
+In the editor, click the menu: **Terminal → New Terminal**.
+
+A black box opens at the bottom of the screen.
+
+**You should see** a prompt that ends like this:
+
+```
+root@de-lab:/work#
+```
+
+Two things to notice:
+
+- `de-lab` means you are **inside the container**, not on your own computer.
+- `/work` is your folder. The same files, seen from inside.
+
+**From here on, every command in this guide and in all six guides goes in this box.** Not in your computer's own terminal.
+
+If you prefer your own terminal, type `docker compose exec lab bash` there instead. It is the same thing.
+
+---
+
+## Step 7 — Check that everything is installed
+
+Type these four commands, one at a time, in the editor's terminal.
+
+**Check Python:**
 
 ```bash
-python -c "import duckdb, pandas, pyspark; print('python ok', duckdb.__version__)"
+python -c "import duckdb, pandas, pyspark; print('python ok')"
+```
+
+You should see: `python ok`
+
+**Check the test tool:**
+
+```bash
 pytest --version
-java -version                        # PySpark won't start without this
-node --version && tsc --version      # JS and TS
 ```
 
-> **Why no password on the IDE?** The ports publish as `127.0.0.1:8443`, not `8443` — reachable from your own browser and from nowhere else, not from your phone, not from café wifi. If you ever want access from another machine, add a password *before* widening that binding.
+You should see: `pytest 8.x.x`
 
----
-
-## 3. Adding libraries later
-
-This is the workflow you'll use most, so it's worth doing once deliberately.
-
-```
-   You edit                      You run                        What happens
- ┌──────────────────┐      ┌──────────────────────┐      ┌──────────────────────┐
- │ requirements.txt │      │ docker compose       │      │ new packages install │
- │      or          │ ───▶ │      restart lab     │ ───▶ │ ~20 seconds          │
- │ package.json     │      └──────────────────────┘      │                      │
- └──────────────────┘                                    │ your files, notebooks│
-                                                         │ and databases: as    │
-                                                         │ you left them        │
-                                                         └──────────────────────┘
-```
-
-**Python.** Open `requirements.txt`, add the name under *your libraries*, save:
-
-```
-# --- your libraries ---
-polars
-sqlalchemy
-```
+**Check Java** (Spark will not start without it):
 
 ```bash
-docker compose restart lab
+java -version
 ```
 
-Wait for `READY` in `docker compose logs -f lab`, then reload the browser tab. `import polars` works.
+You should see three lines about `openjdk version`.
 
-**JavaScript / TypeScript.** Add to `package.json` under `dependencies`, then the same restart. Or, from the IDE terminal, the shortcut that does both at once:
+**Check Node, TypeScript and dbt:**
 
 ```bash
-npm install zod          # installs now AND writes it into package.json
+node --version && tsc --version && dbt --version
 ```
 
-That second form is worth preferring for JS — npm updates the file for you, so the next rebuild already knows about it.
+You should see a version number for each. The dbt output should list `duckdb` under `Plugins`.
 
-**Pin a version when you care, don't when you don't.** `pandas==2.2.2` in `requirements.txt` means everyone who runs this gets that exact version; a bare `pandas` means you get whatever's current. For practice, bare is fine. For anything you'd hand to a colleague, pin.
-
-> **Tip.** `pip install polars` in the terminal also works and is instant — but it's gone the next time you rebuild. Use it to try something; put it in `requirements.txt` once you've decided to keep it.
+**All four worked?** The hard part is done.
 
 ---
 
-## 4. The IDE
+## Step 8 — Make the toy shop database
 
-`http://localhost:8443` is code-server: VS Code, running in the container, in your browser. It comes configured — Python interpreter already pointed at `/opt/venv/bin/python`, pytest already enabled, format-on-save already on. Extensions for Python, Jupyter, ESLint, Prettier, SQLTools and YAML install on first run.
-
-What you get that a terminal doesn't give you:
-
-| | |
-|---|---|
-| **Run a test by clicking it** | The flask icon in the sidebar lists every test. Click the ▶ next to one to run it, the 🐞 to debug it. Guide 3 is much easier this way. |
-| **Notebooks inside the editor** | Make a `.ipynb` file and it opens as a notebook, with the file tree and your source next to it. |
-| **A real debugger** | Click left of a line number for a breakpoint, then F5. Inspect variables instead of adding `print` statements. |
-| **Type errors as you type** | Red squiggles in `.ts` files, no build step needed. |
-| **Integrated terminal** | ``Ctrl-` `` — same shell as `docker compose exec lab bash`. |
-
-To change any setting, edit `.vscode/settings.json` in your folder. It's yours; the container creates it once and never touches it again.
-
-> **Tip.** Your IDE settings, extensions and open-file history live in a Docker volume, so plain `docker compose down` keeps them. Only `down -v` resets the editor.
-
----
-
-## 5. JavaScript and TypeScript
-
-First start creates a real TypeScript project — not a scratch folder:
-
-```
-tsconfig.json          strict mode, ES2022, node types
-ts/index.ts            your entry point
-package.json           dependencies and the scripts below
-node_modules/          installed packages
-```
-
-From the IDE terminal:
-
-| Command | What it does |
-|---|---|
-| `npm run dev` | Runs `ts/index.ts` and **re-runs it every time you save**. This is the practice loop. |
-| `npm run check` | Type-check the whole project without running it. |
-| `npm run test` | Vitest. Put tests in `ts/*.test.ts`. |
-| `npm run serve` | Vite dev server on `http://localhost:5173`, already bound correctly. |
-| `tsx some-file.ts` | Run any single `.ts` file immediately, no config. |
-
-Try it — open `ts/index.ts` in the IDE, run `npm run dev` in the terminal, then change a line and save. Output updates without you touching the terminal.
-
-> **Trap.** `tsx` and `npm run dev` **strip types and run**; they do not type-check. A file with genuine type errors still executes. The red squiggles in the editor and `npm run check` are what actually tell you. This surprises people coming from `tsc`-based setups.
-
-**Strict mode is on**, including `noUncheckedIndexedAccess` — so `rows[0]` has type `T | undefined` and TypeScript makes you handle the empty case. It's stricter than most tutorials. That's deliberate: it catches the class of bug that's worth catching, and turning it off later is one line in `tsconfig.json`.
-
-**JS and TS in notebooks too.** JupyterLab has three kernels — Python, JavaScript, TypeScript. Pick one when you create a notebook and your cells are that language. Handy for trying a snippet without making a file.
-
----
-
-## 6. Seed the toy shop database
-
-Guide 1 works against six rows in a table called `raw_sales`. Run this in the IDE terminal (or a notebook cell):
+Guide 1 needs a small database. Copy this whole block into the terminal and press Enter:
 
 ```bash
 python - <<'PY'
@@ -238,7 +260,7 @@ print(con.sql("SELECT count(*) AS lines, count(DISTINCT receipt_no) AS sales, su
 PY
 ```
 
-### Check it
+**You should see** exactly this:
 
 ```
 ┌───────┬───────┬─────────┐
@@ -247,20 +269,15 @@ PY
 └───────┴───────┴─────────┘
 ```
 
-**`lines` is 6 but `sales` is 5.** That gap isn't a mistake in the data — it's the point of guide 1's first two concepts, and everything else there grows out of it.
+**Look at those numbers.** There are 6 rows but only 5 sales. That is not a mistake. One shopping trip put two toys on one receipt, so it takes up two rows. Guide 1 is mostly about what to do with that.
 
-Two other details, because guide 1 spends whole sections on them:
-
-- The **Red Robot costs $24.99 on 1–2 August and $29.99 on 3 August**. A price that changed.
-- **Ben appears with two different cities.** Toronto on R-002, Mississauga on R-005.
-
-> **Tip.** In a notebook, `duckdb.connect('/work/shop.duckdb').sql(q).df()` returns a pandas DataFrame, which renders as a proper table. Far easier to read than shell output while you work through guide 1.
+A new file called `shop.duckdb` has now appeared in your folder. You will see it in the editor's file list too.
 
 ---
 
-## 7. Create the etl-practice project
+## Step 9 — Make the test project folder
 
-Guide 3 tests a project with a specific shape. Create it once:
+Guide 3 needs a small project with a set shape. Copy this whole block in:
 
 ```bash
 mkdir -p /work/etl-practice/etl /work/etl-practice/tests
@@ -293,49 +310,51 @@ TOML
 pip install -e .
 ```
 
-The result:
-
-```
-etl-practice/
-├── pyproject.toml
-├── etl/
-│   ├── __init__.py          ← empty, but imports break confusingly without it
-│   ├── parsing.py
-│   ├── transforms.py
-│   └── spark_jobs.py
-└── tests/
-    └── conftest.py          ← shared fixtures live here
-```
-
-### Check it
+Now check it worked:
 
 ```bash
 pytest
-# collected 0 items  ← correct, there are no tests yet
+```
+
+**You should see:**
+
+```
+collected 0 items
+```
+
+**Zero is the right answer.** You have not written any tests yet. If it says `collected 0 items` without an error, the project is set up correctly.
+
+One more check:
+
+```bash
 python -c "import etl; print('importable')"
 ```
 
-Then open the IDE's testing sidebar. Once guide 3 has you writing tests, they appear there and run on a click.
+You should see: `importable`
 
-> **Trap.** `--strict-markers` turns a **typo'd marker into an error** rather than something that silently does nothing. `@pytest.mark.slwo` would otherwise skip nothing and tell you nothing. Leave it on.
+Then go back to the main folder:
+
+```bash
+cd /work
+```
 
 ---
 
-## 8. The warehouse and dbt
+## Step 10 — Check the warehouse files
 
-Guides 5 and 6 build a warehouse from three CSV files that the container creates on first start:
+Guides 5 and 6 use three small CSV files. The container already made them for you in Step 3. Just check they are there:
 
-```
-warehouse/landing/sales_2026-08-01.csv     3 lines
-warehouse/landing/sales_2026-08-02.csv     2 lines
-warehouse/landing/sales_2026-08-03.csv     2 lines  ← one is a re-sent copy of R-002
-                                           ───────
-                                           7 lines, 6 real sale lines
+```bash
+ls /work/warehouse/landing/
 ```
 
-That deliberate duplicate is what makes deduplication, idempotency and late-arriving data real rather than theoretical. Both guides depend on it.
+**You should see:**
 
-### Check it
+```
+sales_2026-08-01.csv  sales_2026-08-02.csv  sales_2026-08-03.csv
+```
+
+Now count what is inside them:
 
 ```bash
 python -c "
@@ -344,73 +363,147 @@ print(duckdb.connect().sql('''
   SELECT count(*) AS lines,
          count(DISTINCT (receipt_no, toy_name)) AS real_lines
   FROM read_csv(\"/work/warehouse/landing/*.csv\", header=true)'''))"
-# 7 | 6
 ```
 
-**dbt is already installed and already configured to find its profile.** `DBT_PROFILES_DIR` points at `/work/dbt`, so you never pass `--profiles-dir`:
+**You should see:**
 
-```bash
-dbt --version          # should list duckdb under "Plugins"
+```
+┌───────┬────────────┐
+│ lines │ real_lines │
+│   7   │     6      │
+└───────┴────────────┘
 ```
 
-Guide 6 has you write `/work/dbt/profiles.yml` and the project itself — that's concept 2, and doing it by hand once is worth more than having it appear.
-
-> **Trap.** `dbt docs serve` binds to `127.0.0.1` inside the container, where your browser can't reach it. Run it as `dbt docs serve --port 8080 --host 0.0.0.0`; port 8080 is published for exactly this.
-
-The warehouse file itself, `warehouse.duckdb`, gets created by the guides. Delete it any time you want to start over — the landing CSVs are the source of truth and they're regenerated if you delete those too.
+**7 lines but only 6 real ones.** The shop's till sent one sale twice — once on the first day, and again by mistake on the third day. Guides 5 and 6 teach you how to deal with that. It is put there on purpose, so do not "fix" it.
 
 ---
 
-## 9. Daily commands
+## Step 11 — Try TypeScript
 
-On your laptop, in the folder with `docker-compose.yml`:
+The container made a small TypeScript project for you too. Run it:
+
+```bash
+cd /work
+npm run dev
+```
+
+**You should see:**
+
+```
+[ 'ANA', 'BEN' ]
+```
+
+Now leave that running. In the editor, open the file `ts/index.ts` from the file list, change one of the names, and save with **Ctrl-S**.
+
+**You should see** the terminal print the new result by itself, without you typing anything. That is watch mode. It is the fastest way to practise.
+
+Press **Ctrl-C** to stop it.
+
+Four commands worth remembering:
 
 | Command | What it does |
 |---|---|
-| `docker compose up -d` | Start it. IDE and notebooks come up with it. |
-| `docker compose restart lab` | **Pick up new libraries** from `requirements.txt` / `package.json` |
-| `docker compose exec lab bash` | A shell inside |
-| `docker compose logs -f lab` | Watch startup, or find out why something didn't come up |
-| `docker compose stop` | Stop, keep everything |
-| `docker compose down` | Remove the container, **keep** installed tools and IDE settings |
-| `docker compose down -v` | Also delete the tool volumes — clean slate, one rebuild away |
+| `npm run dev` | Runs your file again every time you save |
+| `npm run check` | Checks your types and tells you about mistakes |
+| `tsx myfile.ts` | Runs one TypeScript file right now |
+| `npm run serve` | Starts a web server at `http://localhost:5173` |
 
-**None of these touch your work.** Files, notebooks and `.duckdb` databases live in your folder on your laptop the whole time.
+**One thing that surprises people:** `npm run dev` runs your file even if the types are wrong. It ignores type mistakes. Use `npm run check` when you want to be told about them.
 
 ---
 
-## 10. Troubleshooting
+## Step 12 — If something goes wrong
 
-| Symptom | Cause and fix |
+Find your problem in the left column.
+
+| What you see | What to do |
 |---|---|
-| `Cannot connect to the Docker daemon` | Docker Desktop isn't running. Start it and wait. |
-| `localhost:8443` won't load | Startup isn't finished. `docker compose logs -f lab`, wait for `READY`. |
-| New library still not importable | The restart hasn't finished, or the name is misspelled. Check the logs for a pip error, then reload the browser tab. |
-| `pip install` failed on restart | One bad line in `requirements.txt` stops the whole install. The log names it — fix that line, restart again. |
-| Container exits immediately | Read the logs. Usually a network blip during install; `docker compose restart lab` retries. |
-| `java: command not found` | First-run install didn't finish. Restart, watch for `READY`. |
-| PySpark hangs on start | `SPARK_LOCAL_IP=127.0.0.1` is already set for exactly this. If it persists, restart. |
-| `ModuleNotFoundError: etl` | You skipped `pip install -e .`, or you're not in `/work/etl-practice`. |
-| Notebook has no TypeScript kernel | `tslab install --python=/opt/venv/bin/python`, then reload the tab. |
-| An IDE extension didn't install | Not all VS Code extensions exist on Open VSX, which is what code-server uses. The log says which one was skipped. |
-| `port is already allocated` | Something else holds it. Change the left number in `ports:` — `127.0.0.1:8444:8443`. |
-| Dev server unreachable in the browser | It bound to `127.0.0.1` inside the container. Restart it with `--host 0.0.0.0`. |
-| IDE lost your settings | You ran `down -v`. Settings live in the `ide-state` volume; plain `down` keeps them. |
-| `Could not find profile named 'toyshop'` | `profile:` in `dbt_project.yml` must match the top key in `profiles.yml`. Usually a typo in one of the two. |
-| `dbt docs serve` unreachable | Add `--host 0.0.0.0 --port 8080`. |
-| Everything is subtly broken | `docker compose down -v && docker compose up -d`. Genuinely a clean slate, and your files are fine. |
+| `Cannot connect to the Docker daemon` | Docker Desktop is not running. Open it, wait, try again. |
+| `localhost:8443` does not open | It is not ready yet. Run `docker compose logs -f lab` and wait for `READY`. |
+| The container stops on its own | Run `docker compose logs lab` and read the last lines. Usually the internet dropped during download. Run `docker compose restart lab`. |
+| `java: command not found` | The install did not finish. Run `docker compose restart lab` and wait for `READY`. |
+| `no such file or directory` on a `docker compose` command | You are in the wrong folder on your computer. Go back to the folder holding `docker-compose.yml`. |
+| `ModuleNotFoundError: etl` | You are not in `/work/etl-practice`, or you skipped `pip install -e .` in Step 9. |
+| `port is already allocated` | Another program is using that port. Open `docker-compose.yml`, find `8443:8443`, change the **left** number to `8444`. Then `docker compose up -d`. |
+| A web page in the container will not open in your browser | The program is only listening to itself. Start it again with `--host 0.0.0.0` at the end. |
+| Spark hangs and never starts | Run `docker compose restart lab`. |
+| Nothing works and you want to start over | Run `docker compose down -v` then `docker compose up -d`. Takes 5 minutes. **Your files are safe** — this only deletes installed programs. |
+
+**Still stuck?** Run `docker compose logs lab` and read the last 20 lines. The real error is almost always there, near the bottom.
 
 ---
 
-## Where to go next
+## Adding a library later
 
-| Guide | Covers |
+You will need this often, so it has its own short section.
+
+**For a Python library:**
+
+1. Open `requirements.txt` in the editor.
+2. Add the name on its own line at the bottom, for example `polars`.
+3. Save the file.
+4. In your computer's terminal, run `docker compose restart lab`.
+5. Wait about 20 seconds, then reload the browser tab.
+
+**You should see** that `import polars` now works in the terminal.
+
+**For a JavaScript library**, it is one command in the editor's terminal:
+
+```bash
+npm install zod
+```
+
+That installs it **and** adds it to `package.json` for you.
+
+**Your work is never touched by this.** Files, notebooks and databases all stay exactly as you left them.
+
+> There is a shortcut: typing `pip install polars` works right away. But it disappears the next time you rebuild. Use it to try something out. Put it in `requirements.txt` once you decide to keep it.
+
+---
+
+## Commands you will use every day
+
+Type these in **your computer's** terminal, in the folder with `docker-compose.yml`:
+
+| Command | What it does |
 |---|---|
-| [01 — Data Modelling](01-data-modelling.md) | Grain, facts, dimensions, keys, star schema, SCD2 |
-| [02 — Async, Regex, DE Patterns](02-python-async-regex-patterns.md) | Concurrency, pattern matching, and everyday Python for pipelines |
-| [03 — pytest for ETL](03-pytest-for-etl.md) | Fixtures, mocking, Spark tests, and the bugs they catch |
-| [04 — Foundry OSDK & Marketplace](04-foundry-osdk-marketplace.md) | Run this one in your own Foundry workspace |
-| [05 — Medallion Architecture](05-medallion-architecture.md) | Bronze, silver, gold: building a warehouse in layers |
-| [06 — dbt Basics](06-dbt-basics.md) | models, ref, tests, seeds, snapshots, lineage |
+| `docker compose up -d` | Start everything |
+| `docker compose restart lab` | Pick up new libraries you added |
+| `docker compose logs -f lab` | Watch what it is doing |
+| `docker compose stop` | Stop it for now, keep everything |
+| `docker compose down -v` | Delete installed programs and start fresh |
 
-Guide 1 first if you're doing all of them — guide 3's levels on fan-out and SCD2 assume its concepts 9 and 10.
+And these in **the editor's** terminal:
+
+| Command | What it does |
+|---|---|
+| `pytest` | Run your tests |
+| `dbt build` | Run and test your dbt models |
+| `npm run dev` | Run your TypeScript, re-running on save |
+
+---
+
+## Three places to work
+
+They all show the same files. Pick whichever suits what you are doing.
+
+| Where | Address | Best for |
+|---|---|---|
+| **Editor** | `http://localhost:8443` | Most things. Writing files, running tests, notebooks. |
+| **Notebooks** | `http://localhost:8888` | Trying one small idea. Python, JavaScript or TypeScript. |
+| **dbt docs** | `http://localhost:8080` | Guide 6 only, after you run `dbt docs serve --host 0.0.0.0 --port 8080` |
+
+---
+
+## What to read next
+
+| Guide | What it covers |
+|---|---|
+| [01 — Data Modelling](01-data-modelling.md) | How to organise data into tables that make sense |
+| [02 — Async, Regex, DE Patterns](02-python-async-regex-patterns.md) | Python for doing many things at once, and finding patterns in text |
+| [03 — pytest for ETL](03-pytest-for-etl.md) | Writing tests that catch real data bugs |
+| [04 — Foundry OSDK & Marketplace](04-foundry-osdk-marketplace.md) | Do this one in your own Foundry workspace, not here |
+| [05 — Medallion Architecture](05-medallion-architecture.md) | Building a warehouse in three layers |
+| [06 — dbt Basics](06-dbt-basics.md) | The same warehouse again, built with dbt |
+
+**Start with guide 1.** Guides 3, 5 and 6 all use words that guide 1 explains.

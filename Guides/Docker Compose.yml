@@ -29,6 +29,7 @@ services:
       - "127.0.0.1:8443:8443"   # code-server (IDE)
       - "127.0.0.1:8888:8888"   # JupyterLab
       - "127.0.0.1:5173:5173"   # Vite / any JS dev server
+      - "127.0.0.1:8080:8080"   # dbt docs serve
       - "127.0.0.1:8000:8000"   # spare
     environment:
       PATH: /opt/venv/bin:/opt/tools/bin:/work/node_modules/.bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -40,6 +41,7 @@ services:
       PYSPARK_DRIVER_PYTHON: /opt/venv/bin/python
       SPARK_LOCAL_IP: 127.0.0.1
       JAVA_TOOL_OPTIONS: -Xss4m
+      DBT_PROFILES_DIR: /work/dbt
       NPM_CONFIG_PREFIX: /opt/tools
       npm_config_fund: "false"
       npm_config_audit: "false"
@@ -51,6 +53,7 @@ services:
         esbenp.prettier-vscode
         mtxr.sqltools
         redhat.vscode-yaml
+        innoverio.vscode-dbt-power-user
     volumes:
       - ./:/work                                    # your files. the only thing that matters.
       - venv:/opt/venv                              # python packages
@@ -159,6 +162,32 @@ services:
         }
         VS
         fi
+
+        # ---- warehouse landing files (guides 5 and 6) -----------------------
+        if [ ! -d /work/warehouse/landing ]; then
+          echo "[lab] creating warehouse landing files ..."
+          mkdir -p /work/warehouse/landing
+          HDR='receipt_no,sold_at,kid_name,kid_city,toy_name,toy_category,toy_price,quantity,shop_name'
+          cat > /work/warehouse/landing/sales_2026-08-01.csv <<CSV
+        $HDR
+        R-001,2026-08-01 10:15:00,Ana,Brampton,Red Robot,Robots,24.99,2,Main Street
+        R-001,2026-08-01 10:15:00,Ana,Brampton,Puzzle Cube,Puzzles,9.50,1,Main Street
+        R-002,2026-08-01 14:40:00,Ben,Toronto,Red Robot,Robots,24.99,1,Main Street
+        CSV
+          cat > /work/warehouse/landing/sales_2026-08-02.csv <<CSV
+        $HDR
+        R-003,2026-08-02 11:05:00,Cara,Toronto,Kite,Outdoor,14.00,3,Lakeside
+        R-004,2026-08-02 16:20:00,Ana,Brampton,Puzzle Cube,Puzzles,9.50,4,Lakeside
+        CSV
+          # note: R-002 is re-sent here, a day late. guides 5 and 6 depend on it.
+          cat > /work/warehouse/landing/sales_2026-08-03.csv <<CSV
+        $HDR
+        R-005,2026-08-03 09:30:00,Ben,Mississauga,Red Robot,Robots,29.99,1,Lakeside
+        R-002,2026-08-01 14:40:00,Ben,Toronto,Red Robot,Robots,24.99,1,Main Street
+        CSV
+        fi
+
+        mkdir -p /work/dbt
 
         # ---- run ------------------------------------------------------------
         /opt/tools/bin/code-server --bind-addr 0.0.0.0:8443 --auth none /work &

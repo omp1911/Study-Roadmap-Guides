@@ -1,0 +1,655 @@
+# Medallion Architecture
+
+Eight concepts, eight exercises, one warehouse built from scratch.
+
+**Environment:** [00-setup.md](00-setup.md) — the lab container, with `warehouse/landing/*.csv` already created.  
+**Time:** about three hours.
+
+**The idea in one line.** Data moves through three layers — **bronze** (what arrived), **silver** (what's true), **gold** (what's asked) — and each layer is allowed to do exactly one job.
+
+**The dataset.** Three CSV files dropped by an imaginary till system, one per day. Seven lines total, and one of them is a duplicate that arrives a day late. That duplicate is the reason concepts 3 and 5 exist.
+
+---
+
+## How to use this guide
+
+Every concept follows the same three steps.
+
+| Step | What happens |
+|---|---|
+| **Explain** | Plain English and a diagram. No jargon, no assumed knowledge. |
+| **Exercise** | One task. Give it fifteen honest minutes before looking. |
+| **Solution** | Worked through, with the reasoning. Don't read it until you've tried. |
+
+---
+
+## Contents
+
+| # | Concept | What you'll learn |
+|---|---|---|
+| 1 | [Why layers](#1-why-layers) | What goes wrong without them |
+| 2 | [Bronze](#2-bronze) | Land it raw, change nothing |
+| 3 | [Silver](#3-silver) | Clean, type, deduplicate |
+| 4 | [Gold](#4-gold) | Shaped for the question |
+| 5 | [Idempotency](#5-idempotency) | Running twice must not double anything |
+| 6 | [Incremental loads](#6-incremental-loads) | Only touch what changed |
+| 7 | [Tests per layer](#7-tests-per-layer) | Different layers, different checks |
+| 8 | [Conventions and limits](#8-conventions-and-limits) | Naming, and when medallion is overkill |
+
+---
+
+## 1. Why layers
+
+### Explain
+
+Imagine one enormous SQL script that reads the CSV files, fixes the typos, converts the dates, removes duplicates, joins everything, and produces the sales report. It works. Then one of these happens:
+
+- The report is wrong and you need to know whether the till sent bad data or your SQL is bad. You can't tell — there's nothing to look at in between.
+- A second report needs the same cleaning. You copy-paste it. Now there are two copies of the cleaning logic, and next month one of them gets fixed.
+- The till re-sends yesterday's file. Your script has no idea what to do.
+
+Layers exist to give each of those problems a place to live.
+
+```
+   LANDING          BRONZE            SILVER              GOLD
+   ┌──────┐        ┌────────┐       ┌─────────┐       ┌─────────┐
+   │ .csv │ ─────▶ │ exactly│ ────▶ │ clean,  │ ────▶ │ shaped  │
+   │ .csv │        │ what   │       │ typed,  │       │ for the │
+   │ .csv │        │ arrived│       │ deduped │       │ question│
+   └──────┘        └────────┘       └─────────┘       └─────────┘
+                        │                 │                 │
+                   "what did       "what is true"     "what was
+                    they send?"                        asked?"
+                        │                 │                 │
+                   never edited      one version       many of these,
+                   never deleted     of the truth      one per question
+```
+
+The rule that makes it work: **each layer may only read from the layer to its left.** Gold never reads bronze. If gold needs something bronze has, the fix is to add it to silver, not to reach past it.
+
+| Layer | Also called | One job |
+|---|---|---|
+| Bronze | raw, landing, staging | Keep a faithful copy of what arrived |
+| Silver | clean, conformed, core | Make it correct and consistent, once |
+| Gold | marts, serving, presentation | Answer a specific question fast |
+
+> **Trap.** "Bronze/silver/gold" is not a rule about three databases or three tools. It's a rule about *what a transformation is allowed to do*. You can implement all three as schemas in one DuckDB file — which is exactly what you're about to do.
+
+### Exercise
+
+For each of these, name the layer it belongs in and say why in one sentence.
+
+**(a)** Trimming whitespace from `kid_name`.  
+**(b)** A table with one row per kid per month and their total spend.  
+**(c)** A copy of the CSV with two extra columns: the filename it came from and the time it was loaded.  
+**(d)** Converting `toy_price` from text to `DECIMAL(10,2)`.  
+**(e)** Dropping the duplicate R-002 line.
+
+### Solution
+
+**(a) Silver.** Cleaning is silver's job, and doing it once means every gold table downstream gets it for free.
+
+**(b) Gold.** It answers one specific question, at a grain chosen for that question. A different question gets a different gold table.
+
+**(c) Bronze.** The data itself is unchanged — the extra columns are *lineage*, which is bronze's one permitted addition.
+
+**(d) Silver.** Typing is part of "make it correct". Bronze keeps text as text because that's what arrived.
+
+**(e) Silver.** Bronze must keep the duplicate — it's a true record of what the till sent, and you'll want it when someone asks why the till sent it twice.
+
+The pattern in all five: **if it's about what arrived, it's bronze; if it's about what's true, it's silver; if it's about what someone asked, it's gold.**
+
+---
+
+## 2. Bronze
+
+### Explain
+
+Bronze is a photograph of what arrived. The temptation is to fix the obvious problems on the way in. Don't. The moment bronze differs from the source file, you have lost the ability to answer "did they send us bad data, or did we break it?"
+
+Bronze may add exactly one kind of thing: **lineage columns** that record where the row came from and when.
+
+```
+   sales_2026-08-01.csv                bronze.raw_sales
+   ┌────────────────────┐              ┌────────────────────┬──────────────┬─────────────┐
+   │ R-001,Ana,24.99,2  │  ──────────▶ │ R-001,Ana,24.99,2  │ _source_file │ _loaded_at  │
+   └────────────────────┘              └────────────────────┴──────────────┴─────────────┘
+                                        ▲ every value                ▲ added, never
+                                          untouched, still text        derived from data
+```
+
+In DuckDB, `read_csv` with `filename=true` gives you the lineage for free. Note `all_varchar=true`: bronze keeps everything as text so a malformed number lands as text rather than failing the load or silently becoming `NULL`.
+
+```sql
+CREATE SCHEMA IF NOT EXISTS bronze;
+
+CREATE OR REPLACE TABLE bronze.raw_sales AS
+SELECT *,
+       now() AS _loaded_at
+FROM read_csv('/work/warehouse/landing/*.csv',
+              filename    = true,
+              all_varchar = true,
+              header      = true);
+```
+
+| Bronze does | Bronze does not |
+|---|---|
+| Copy every row and column as-is | Fix typos, trim, upper-case |
+| Add `_loaded_at`, `_source_file` | Cast to real types |
+| Keep duplicates | Deduplicate |
+| Keep rows that look wrong | Filter anything out |
+
+> **Trap.** "Bronze is raw" does not mean "bronze is a dumping ground you never look at". You will look at it — every time a number in gold is disputed, bronze is the evidence.
+
+### Exercise
+
+Create `bronze.raw_sales` from all three landing files. Then answer, in SQL:
+
+**(a)** How many rows landed, and how many came from each file?  
+**(b)** Which receipt number appears in two different files?
+
+### Solution
+
+```sql
+CREATE SCHEMA IF NOT EXISTS bronze;
+
+CREATE OR REPLACE TABLE bronze.raw_sales AS
+SELECT *, now() AS _loaded_at
+FROM read_csv('/work/warehouse/landing/*.csv',
+              filename = true, all_varchar = true, header = true);
+```
+
+**(a)**
+
+```sql
+SELECT filename, count(*) AS rows
+FROM bronze.raw_sales
+GROUP BY filename ORDER BY filename;
+-- .../sales_2026-08-01.csv | 3
+-- .../sales_2026-08-02.csv | 2
+-- .../sales_2026-08-03.csv | 2
+-- total 7
+```
+
+**(b)**
+
+```sql
+SELECT receipt_no, count(DISTINCT filename) AS files
+FROM bronze.raw_sales
+GROUP BY receipt_no
+HAVING count(DISTINCT filename) > 1;
+-- R-002 | 2
+```
+
+R-002 arrived on the 1st and was re-sent on the 3rd. **Bronze keeps both.** Seven rows landed, and seven rows is the honest answer to "what did they send us". Fixing it is the next layer's job.
+
+---
+
+## 3. Silver
+
+### Explain
+
+Silver answers "what is actually true?" — once, so that nothing downstream has to ask again. Four jobs, in order:
+
+```
+   bronze.raw_sales  (7 rows, all text)
+        │
+        │  1. TYPE      '24.99' → DECIMAL      '2026-08-01 10:15' → TIMESTAMP
+        │  2. CLEAN     trim, case-normalise, empty string → NULL
+        │  3. DEDUPE    keep one row per business key
+        │  4. CONFORM   same column names and units as every other source
+        ▼
+   silver.sales      (6 rows, properly typed)
+```
+
+**Deduplication needs a business key** — the columns that identify a real-world thing. Here that's `(receipt_no, toy_name)`: one toy on one receipt. When two rows share a key, you need a tiebreak rule. "Keep the most recently loaded" is the usual one.
+
+```sql
+CREATE SCHEMA IF NOT EXISTS silver;
+
+CREATE OR REPLACE TABLE silver.sales AS
+WITH typed AS (
+  SELECT
+    trim(receipt_no)                    AS receipt_no,
+    CAST(sold_at AS TIMESTAMP)          AS sold_at,
+    trim(kid_name)                      AS kid_name,
+    trim(kid_city)                      AS kid_city,
+    trim(toy_name)                      AS toy_name,
+    trim(toy_category)                  AS toy_category,
+    CAST(toy_price AS DECIMAL(10,2))    AS toy_price,
+    CAST(quantity AS INTEGER)           AS quantity,
+    trim(shop_name)                     AS shop_name,
+    _loaded_at
+  FROM bronze.raw_sales
+),
+ranked AS (
+  SELECT *, row_number() OVER (
+             PARTITION BY receipt_no, toy_name
+             ORDER BY _loaded_at DESC) AS rn
+  FROM typed
+)
+SELECT * EXCLUDE (rn) FROM ranked WHERE rn = 1;
+```
+
+Silver's grain is a promise: **one row per toy per receipt, no exceptions.** Everything downstream is allowed to rely on that.
+
+> **Trap.** `row_number()` needs a deterministic `ORDER BY`. If two duplicate rows have the identical `_loaded_at` — which happens when they land in the same run — the winner is arbitrary and your table changes between runs for no visible reason. Add a second tiebreak column when that's possible.
+
+### Exercise
+
+Build `silver.sales`. Then prove three things in SQL:
+
+**(a)** The grain holds — `count(*)` equals the count of distinct `(receipt_no, toy_name)`.  
+**(b)** No row was lost that shouldn't have been: silver has exactly one fewer row than bronze.  
+**(c)** `toy_price` is a real decimal now, not text.
+
+### Solution
+
+Build it as above, then:
+
+**(a)**
+
+```sql
+SELECT count(*) AS n_rows,
+       count(DISTINCT (receipt_no, toy_name)) AS n_unique
+FROM silver.sales;
+-- 6, 6  ✓
+```
+
+**(b)**
+
+```sql
+SELECT (SELECT count(*) FROM bronze.raw_sales) AS bronze_rows,
+       (SELECT count(*) FROM silver.sales)     AS silver_rows;
+-- 7, 6  ✓ exactly the one duplicate removed
+```
+
+Checking the *difference* rather than just the silver count is the point. If silver had come back with 4 rows, `count(*) = count(DISTINCT ...)` would still have passed happily while you'd silently dropped two real sales.
+
+**(c)**
+
+```sql
+SELECT typeof(toy_price), typeof(sold_at), typeof(quantity)
+FROM silver.sales LIMIT 1;
+-- DECIMAL(10,2) | TIMESTAMP | INTEGER  ✓
+```
+
+`typeof()` is worth knowing — a column of text that looks numeric prints identically to a real decimal and behaves completely differently when you sum it.
+
+---
+
+## 4. Gold
+
+### Explain
+
+Gold is built backwards from a question. Someone asks "revenue by category by day"; you build the table that answers it and nothing else. A second question gets a second gold table, even if the two overlap.
+
+This is where guide 1's star schema lives — dimensions and facts are gold-layer shapes.
+
+```
+                       silver.sales   ← one clean version of the truth
+                            │
+              ┌─────────────┼─────────────┐
+              ▼             ▼             ▼
+      gold.dim_toy   gold.fct_sale   gold.daily_category_revenue
+      gold.dim_kid                   (one row per category per day)
+      gold.dim_date
+              │             │             │
+              └── "which toys?" ──┘       └── "how did we do?"
+                  the star                    a flat answer table
+
+    Two questions, two shapes, same source. Both correct.
+```
+
+Gold tables are allowed to be redundant with each other. That feels wasteful and isn't: they're cheap to rebuild, and the alternative — one clever table serving every question — is how you end up with something nobody can change.
+
+```sql
+CREATE SCHEMA IF NOT EXISTS gold;
+
+CREATE OR REPLACE TABLE gold.daily_category_revenue AS
+SELECT CAST(sold_at AS DATE)      AS sale_date,
+       toy_category,
+       sum(quantity * toy_price)  AS revenue,
+       sum(quantity)              AS units,
+       count(DISTINCT receipt_no) AS receipts
+FROM silver.sales
+GROUP BY 1, 2;
+```
+
+| Gold does | Gold does not |
+|---|---|
+| Aggregate, join, denormalise | Clean, trim, cast |
+| Pick a grain to suit one question | Read from bronze |
+| Get rebuilt cheaply and often | Hold logic other golds also need |
+
+> **Trap.** When two gold tables need the same non-trivial calculation, that calculation belongs in silver — or in an intermediate table between them. The second time you copy-paste a `CASE WHEN` between gold models, you've found a silver column.
+
+### Exercise
+
+Build `gold.daily_category_revenue`. Then check it against a number you already trust: **total revenue across the whole gold table must equal total revenue computed directly from silver.**
+
+Write that check as a single query returning one row that says whether it passed.
+
+### Solution
+
+```sql
+CREATE OR REPLACE TABLE gold.daily_category_revenue AS
+SELECT CAST(sold_at AS DATE) AS sale_date, toy_category,
+       sum(quantity * toy_price) AS revenue,
+       sum(quantity) AS units,
+       count(DISTINCT receipt_no) AS receipts
+FROM silver.sales GROUP BY 1, 2;
+```
+
+```sql
+SELECT (SELECT sum(revenue) FROM gold.daily_category_revenue)     AS gold_total,
+       (SELECT sum(quantity * toy_price) FROM silver.sales)       AS silver_total,
+       (SELECT sum(revenue) FROM gold.daily_category_revenue)
+         = (SELECT sum(quantity * toy_price) FROM silver.sales)   AS matches;
+-- 194.46 | 194.46 | true  ✓
+```
+
+This is a **reconciliation test**, and it's the single most valuable test in a warehouse. An aggregate that silently disagrees with its source is the bug that survives longest, because the number still looks plausible. Write one of these for every gold table that involves money.
+
+---
+
+## 5. Idempotency
+
+### Explain
+
+**Idempotent** means: running it twice gives the same result as running it once. Pipelines get re-run constantly — a retry after a timeout, a backfill, someone clicking the button twice — and a pipeline that isn't idempotent turns each of those into corrupted data.
+
+```
+   NOT IDEMPOTENT                        IDEMPOTENT
+   INSERT INTO gold.x SELECT ...         CREATE OR REPLACE TABLE gold.x AS SELECT ...
+
+   run 1 →  6 rows                       run 1 →  6 rows
+   run 2 → 12 rows  ← revenue doubled    run 2 →  6 rows  ✓
+   run 3 → 18 rows                       run 3 →  6 rows  ✓
+```
+
+Three ways to get it, in order of preference:
+
+| Approach | How | Good when |
+|---|---|---|
+| **Full rebuild** | `CREATE OR REPLACE TABLE ... AS SELECT` | The data fits. Almost always, at practice scale. |
+| **Delete-and-insert by partition** | `DELETE WHERE sale_date = '2026-08-02'` then insert that day | Big tables, reloading one day |
+| **Merge / upsert** | `MERGE INTO ... ON key WHEN MATCHED ...` | Rows arrive updated, not just new |
+
+The everyday failure is a bare `INSERT INTO`. It looks harmless and is the most common way a warehouse ends up quietly reporting inflated revenue.
+
+> **Trap.** `now()` inside a model breaks idempotency in a subtler way — the data is the same but `_loaded_at` differs, so any downstream comparison of "did this change?" says yes every run. Bronze can afford it because bronze is append-only evidence; silver and gold generally shouldn't.
+
+### Exercise
+
+**(a)** Run your `gold.daily_category_revenue` build twice. Confirm the row count and total revenue don't move.
+
+**(b)** Now write the non-idempotent version — `INSERT INTO` against an already-populated table — and run it twice. Record what total revenue becomes.
+
+**(c)** Fix it using the delete-and-insert pattern, reloading only 2026-08-02, and show the total is back to correct.
+
+### Solution
+
+**(a)** `CREATE OR REPLACE` is idempotent by construction — 194.46 both times, same row count.
+
+**(b)**
+
+```sql
+INSERT INTO gold.daily_category_revenue
+SELECT CAST(sold_at AS DATE), toy_category, sum(quantity*toy_price),
+       sum(quantity), count(DISTINCT receipt_no)
+FROM silver.sales GROUP BY 1,2;
+
+SELECT sum(revenue) FROM gold.daily_category_revenue;
+-- 388.92   ← exactly double. every row now exists twice.
+```
+
+Note what did *not* happen: no error, no warning, no duplicate-key complaint. The table just quietly holds two of everything.
+
+**(c)**
+
+```sql
+-- rebuild clean first
+CREATE OR REPLACE TABLE gold.daily_category_revenue AS
+SELECT CAST(sold_at AS DATE) AS sale_date, toy_category,
+       sum(quantity*toy_price) AS revenue, sum(quantity) AS units,
+       count(DISTINCT receipt_no) AS receipts
+FROM silver.sales GROUP BY 1,2;
+
+-- now reload one day, idempotently
+BEGIN;
+DELETE FROM gold.daily_category_revenue WHERE sale_date = DATE '2026-08-02';
+INSERT INTO gold.daily_category_revenue
+SELECT CAST(sold_at AS DATE), toy_category, sum(quantity*toy_price),
+       sum(quantity), count(DISTINCT receipt_no)
+FROM silver.sales
+WHERE CAST(sold_at AS DATE) = DATE '2026-08-02'
+GROUP BY 1,2;
+COMMIT;
+
+SELECT sum(revenue) FROM gold.daily_category_revenue;
+-- 194.46  ✓ and running the whole block again gives 194.46 again
+```
+
+**The `BEGIN`/`COMMIT` matters.** Without it, a crash between the delete and the insert leaves that day missing entirely — which is worse than the duplicate you were fixing.
+
+---
+
+## 6. Incremental loads
+
+### Explain
+
+Full rebuilds are the right default. You outgrow them when the rebuild takes longer than the gap between runs — and only then.
+
+An incremental load needs two things: a way to identify **new** rows, and a way to handle **late** ones.
+
+```
+   Day 1 run          Day 2 run                Day 3 run
+   ┌────────┐         ┌────────┐               ┌────────┐
+   │ 01.csv │         │ 02.csv │               │ 03.csv │  ← contains a row
+   └────────┘         └────────┘               └────────┘    dated day 1
+        │                  │                        │
+        ▼                  ▼                        ▼
+   process all      process only new         process new — but a
+                                             high-water mark on
+                                             sold_at would MISS the
+                                             late day-1 row entirely
+```
+
+**The high-water mark trap.** "Load rows where `sold_at` > the newest `sold_at` I've already got" is the obvious approach and it silently drops late-arriving data. The fix is to watermark on **when you received it**, not when it happened:
+
+```sql
+-- fragile: misses anything that arrives out of order
+WHERE sold_at > (SELECT max(sold_at) FROM silver.sales)
+
+-- robust: based on arrival, not event time
+WHERE _loaded_at > (SELECT max(_loaded_at) FROM silver.sales)
+```
+
+Even then, incremental silver must still **upsert**, not insert — because a late row may be a correction of one you already have. That's what makes the R-002 duplicate interesting: it isn't new data, it's the same sale sent again.
+
+> **Trap.** Incremental models drift. The full-rebuild result and the incremental result should agree, and over months they stop agreeing for reasons nobody remembers. Schedule a periodic full rebuild and compare — weekly is a common choice.
+
+### Exercise
+
+Your silver load currently rebuilds everything. Write an incremental version that:
+
+**(a)** Only reads bronze rows loaded since the last silver run.  
+**(b)** Upserts them into `silver.sales` on `(receipt_no, toy_name)` so a re-sent row updates rather than duplicates.
+
+Then explain in one sentence why `sold_at` would have been the wrong watermark column here.
+
+### Solution
+
+```sql
+-- (a) + (b): new arrivals, deduped among themselves, then merged
+CREATE OR REPLACE TEMP TABLE new_rows AS
+WITH incoming AS (
+  SELECT trim(receipt_no) AS receipt_no,
+         CAST(sold_at AS TIMESTAMP) AS sold_at,
+         trim(kid_name) AS kid_name, trim(kid_city) AS kid_city,
+         trim(toy_name) AS toy_name, trim(toy_category) AS toy_category,
+         CAST(toy_price AS DECIMAL(10,2)) AS toy_price,
+         CAST(quantity AS INTEGER) AS quantity,
+         trim(shop_name) AS shop_name, _loaded_at
+  FROM bronze.raw_sales
+  WHERE _loaded_at > COALESCE((SELECT max(_loaded_at) FROM silver.sales),
+                              TIMESTAMP '1900-01-01')
+)
+SELECT * EXCLUDE (rn) FROM (
+  SELECT *, row_number() OVER (PARTITION BY receipt_no, toy_name
+                               ORDER BY _loaded_at DESC) AS rn
+  FROM incoming
+) WHERE rn = 1;
+
+MERGE INTO silver.sales AS t
+USING new_rows AS s
+  ON t.receipt_no = s.receipt_no AND t.toy_name = s.toy_name
+WHEN MATCHED THEN UPDATE SET
+     sold_at = s.sold_at, kid_name = s.kid_name, kid_city = s.kid_city,
+     toy_category = s.toy_category, toy_price = s.toy_price,
+     quantity = s.quantity, shop_name = s.shop_name, _loaded_at = s._loaded_at
+WHEN NOT MATCHED THEN INSERT VALUES (
+     s.receipt_no, s.sold_at, s.kid_name, s.kid_city, s.toy_name,
+     s.toy_category, s.toy_price, s.quantity, s.shop_name, s._loaded_at);
+```
+
+**Why not `sold_at`:** the re-sent R-002 row is dated 1 August but arrived on the 3rd, so a watermark on `sold_at` would have judged it older than data already loaded and skipped it — the correction would never land. Arrival time is a property of your pipeline and only ever moves forward; event time is a property of the world and does not.
+
+**Two details worth keeping:** dedupe the incoming batch *before* the merge (a batch can contain two versions of the same key, and `MERGE` errors or picks arbitrarily when the source has duplicate keys), and `COALESCE` the watermark so the very first run — when silver is empty — still loads everything.
+
+---
+
+## 7. Tests per layer
+
+### Explain
+
+Each layer earns a different kind of test, because each layer promises something different.
+
+```
+   BRONZE   "did it arrive?"          row count > 0
+                                      expected files present
+                                      no whole-column NULLs
+
+   SILVER   "is it true?"             grain: count(*) = count(DISTINCT key)
+                                      no NULLs in required columns
+                                      values in allowed sets
+                                      types are what you think
+
+   GOLD     "does it add up?"         reconciles to silver totals
+                                      no negative revenue
+                                      every dimension key resolves
+```
+
+The highest-value test in the whole warehouse is the **reconciliation** from concept 4 — gold's total equals silver's total. The second is the **grain check** on silver. Between them they catch most of what actually goes wrong.
+
+A test is just a query that should return zero rows. That's the whole idea, and it's what dbt's testing system is underneath:
+
+```sql
+-- fails if it returns anything
+SELECT receipt_no, toy_name, count(*)
+FROM silver.sales
+GROUP BY 1, 2
+HAVING count(*) > 1;
+```
+
+> **Trap.** Testing that a table is non-empty is not the same as testing it's correct, but skipping the non-empty test is how a silently empty upstream table produces a clean-looking zero in a report. Cheap test, real bug.
+
+### Exercise
+
+Write four zero-rows-means-pass checks:
+
+**(a)** Silver grain holds.  
+**(b)** No silver row has a NULL `toy_price` or `quantity`.  
+**(c)** No gold row has negative revenue.  
+**(d)** Gold reconciles to silver on total revenue.
+
+### Solution
+
+```sql
+-- (a) grain
+SELECT receipt_no, toy_name, count(*) AS n
+FROM silver.sales GROUP BY 1,2 HAVING count(*) > 1;
+
+-- (b) required columns
+SELECT * FROM silver.sales
+WHERE toy_price IS NULL OR quantity IS NULL;
+
+-- (c) sane values
+SELECT * FROM gold.daily_category_revenue WHERE revenue < 0;
+
+-- (d) reconciliation
+SELECT g.total AS gold_total, s.total AS silver_total
+FROM (SELECT sum(revenue) AS total FROM gold.daily_category_revenue) g,
+     (SELECT sum(quantity*toy_price) AS total FROM silver.sales) s
+WHERE g.total <> s.total;
+```
+
+All four return zero rows on healthy data. Run them as one script after every build; four queries is a small enough price that you'll actually keep doing it.
+
+**On (d):** comparing money with `<>` is safe here because both sides are `DECIMAL`. Had these been floats, the correct test would be `abs(g.total - s.total) > 0.01` — floats disagree in the fifteenth decimal place and a strict inequality would fail every single run.
+
+---
+
+## 8. Conventions and limits
+
+### Explain
+
+**Naming.** Consistency matters more than the specific scheme. A common one:
+
+```
+   bronze.raw_<source>              bronze.raw_sales
+   silver.<entity>                  silver.sales, silver.kids
+   gold.dim_<thing>                 gold.dim_toy, gold.dim_date
+   gold.fct_<event>                 gold.fct_sale
+   gold.<question>                  gold.daily_category_revenue
+```
+
+Prefix or schema — pick one and don't do both. `gold.gold_fct_sale` is what happens when a team decides halfway through.
+
+**Where medallion is overkill.** It's a pattern, not a law:
+
+| Situation | Better |
+|---|---|
+| One CSV, one report, one person | A single script. Layers add ceremony and no safety. |
+| Source is already clean and typed | Bronze and silver collapse into one. Don't invent work. |
+| Sub-second serving needs | Gold in a serving store, not the warehouse. |
+| Streaming | The layers still apply but the mechanics differ enough that the recipes here don't transfer. |
+
+**Where it earns its keep:** more than one source, more than one consumer, or anyone ever asking "why is this number different from last week?"
+
+> **Trap.** The most common failure isn't skipping a layer — it's letting business logic leak into bronze because it was quicker that time. Once bronze is no longer a faithful copy, it can never again settle the argument about whether the source was wrong, and that was the entire reason it existed.
+
+### Exercise
+
+You inherit a warehouse with these tables. Each breaks one rule from this guide. Name the rule and the fix.
+
+**(a)** `bronze.sales_clean` — trimmed and typed on the way in.  
+**(b)** `gold.revenue_report` whose SQL reads from `bronze.raw_sales`.  
+**(c)** `silver.sales` built with `INSERT INTO` on a schedule.  
+**(d)** Two gold tables that each contain the same forty-line `CASE WHEN` categorising customers.
+
+### Solution
+
+**(a)** Bronze must be a faithful copy. **Fix:** rename it to `silver.sales`, and add a real bronze that lands the file untouched. You may not be able to recover what the original files contained — which is the point of the rule.
+
+**(b)** Layers may only read the layer to their left. **Fix:** whatever gold needed from bronze, add it to silver, then point gold at silver. If gold genuinely needs raw text, that's a signal silver dropped something it shouldn't have.
+
+**(c)** Not idempotent — every run duplicates the table. **Fix:** `CREATE OR REPLACE`, or delete-and-insert by partition inside a transaction.
+
+**(d)** Duplicated logic; the two will diverge the first time one is edited. **Fix:** the categorisation is a property of the customer, not of either report — it belongs in silver as a column, or in an intermediate model both golds read.
+
+---
+
+## Where to go next
+
+| Guide | Covers |
+|---|---|
+| [00 — Setup](00-setup.md) | The Docker lab: Python, JS, TS, Spark, IDE and notebooks |
+| [01 — Data Modelling](01-data-modelling.md) | Grain, facts, dimensions, keys, star schema, SCD2 |
+| [02 — Async, Regex, DE Patterns](02-python-async-regex-patterns.md) | Concurrency, pattern matching, and everyday Python for pipelines |
+| [03 — pytest for ETL](03-pytest-for-etl.md) | Fixtures, mocking, Spark tests, and the bugs they catch |
+| [04 — Foundry OSDK & Marketplace](04-foundry-osdk-marketplace.md) | Run this one in your own Foundry workspace |
+| [06 — dbt Basics](06-dbt-basics.md) | The same three layers, built as a dbt project |
+
+**Do guide 6 next.** It rebuilds exactly this warehouse in dbt, so you'll be comparing a tool against something you've already done by hand — which is the fastest way to see what the tool is actually for.

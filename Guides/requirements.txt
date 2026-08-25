@@ -28,6 +28,10 @@ freezegun
 httpx
 aiosqlite
 
+# --- warehouse and dbt (guides 5 and 6) ---------------------------------------
+dbt-core
+dbt-duckdb
+
 # --- notebooks and tooling ----------------------------------------------------
 jupyterlab
 ipykernel

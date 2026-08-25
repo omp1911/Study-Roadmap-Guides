@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Execution Order</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Execution" />
-<meta name="theme-color" content="#0B0B0B" />
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACYklEQVR42u3cS07CYBiGUWiYdQ/GGxMX5sS4GuPEhTnBW1yJAxCraUtpaU36nmcEXibt4auW/2dZluVCqqtwCASH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHBIcgkP9WzkE+143z9sHV+sbR8PkEByCQ3AIDsEhOASH4BAcgkOCQ0e19IFx2+7vbqtPHx6fHBM4/rJAxGXlsIyD34UjVwYf/iAVHANGQuzwMDkEh+AQHIJjzLrf4Iq9FWZyCI6+IyH5Dnr65Gg/9+HvrXjjbZd3ZeFoy15ZlxXBITgEh+AQHIJDcAgOwSHBITgEh+AQHIJDcAgOwSE4BIdDoKasPl8sKuvOq1mDHo2j1gQl6Tg6sggnUpAx6m+ZHDNnETtCCjKMEDgExyQv95DhUZDBh8uK4JjwJT774WFyCA7BMfHkn/eVxeQQHIJDcAgOwSE4/qGx117Me22HySE4BMeUk3/26wVNDmXjGOMlnrDMOGVynPZchixAd1kRHKd7uefsW0ncDtl7EUbajsjEy0q/cxy4V9YueyzgOF6Jz+eA46f19eX2weblzdHwr6zgEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkOCQ3AIDo2UTU27Ls7Pqk/fPz4dE5OjRkbtV+Aggw84ugkI91GQMfxn4BAcEhyCQ3D0qsudruS7YemTo/3ch98ndVlpFOAOOhz1DsiA45eG1XdkwCE4BIfgEByCQ3AIDsEhOASH1JBNTTI5BIfgEByCQ3AIDsEhOASHBIfgEByCQ3AIDsEhOASH4JDgEBwa0Be9iYCxN5p+DwAAAABJRU5ErkJggg==" />
-<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACYklEQVR42u3cS07CYBiGUWiYdQ/GGxMX5sS4GuPEhTnBW1yJAxCraUtpaU36nmcEXibt4auW/2dZluVCqqtwCASH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHBIcgkP9WzkE+143z9sHV+sbR8PkEByCQ3AIDsEhOASH4BAcgkOCQ0e19IFx2+7vbqtPHx6fHBM4/rJAxGXlsIyD34UjVwYf/iAVHANGQuzwMDkEh+AQHIJjzLrf4Iq9FWZyCI6+IyH5Dnr65Gg/9+HvrXjjbZd3ZeFoy15ZlxXBITgEh+AQHIJDcAgOwSHBITgEh+AQHIJDcAgOwSE4BIdDoKasPl8sKuvOq1mDHo2j1gQl6Tg6sggnUpAx6m+ZHDNnETtCCjKMEDgExyQv95DhUZDBh8uK4JjwJT774WFyCA7BMfHkn/eVxeQQHIJDcAgOwSE4/qGx117Me22HySE4BMeUk3/26wVNDmXjGOMlnrDMOGVynPZchixAd1kRHKd7uefsW0ncDtl7EUbajsjEy0q/cxy4V9YueyzgOF6Jz+eA46f19eX2weblzdHwr6zgEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkOCQ3AIDo2UTU27Ls7Pqk/fPz4dE5OjRkbtV+Aggw84ugkI91GQMfxn4BAcEhyCQ3D0qsudruS7YemTo/3ch98ndVlpFOAOOhz1DsiA45eG1XdkwCE4BIfgEByCQ3AIDsEhOASH1JBNTTI5BIfgEByCQ3AIDsEhOASHBIfgEByCQ3AIDsEhOASH4JDgEBwa0Be9iYCxN5p+DwAAAABJRU5ErkJggg==" />
+<meta name="theme-color" content="#0C0C0C" />
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACSUlEQVR42u3cvU3DUBiGUcei9ApJxRz0SIg1mIk1EBI9c1CFRSgsBQtdBxP/EN33PJWJoLFPvkTmXu+6rmukUq1TIDgEh+AQHIJDcAgOwSE4BIcEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIdq68YpOPXxdNcf3D6/Oxsmh+AQHIJDcAgOwSE4BIcS2nkOad/jw/3wx5fXN+fE5CjIKL4CBxl8wDFNQLiPloz5vwOH4JDgEByC46Km3OlKvhuWPjnOX/vw+6Q+VkYFuIMOR9kBGY1/vA2zNcHkEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkNwOAUay+rzphmsOx9mDXo0jqIJStJxTGQRTqQlY9W/gqN+GZk+WjL4gGOx65rjoyWDD5NDcGz1Rk8YHiaH4BAcW87/6j9ZTA7BITgEh+AQHILjf1pvkU71y39MDsEhODab/wlLSk0OxeNY9o0eshI9aHIsdUVz9ihkfazMv65Ru1fivnPMubpp+5oSv5Bedo0Dd7zZK4sFHH9XYpc9HN8dDvv+4Hj8dDYaN8EEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEBwSHIJDcAgOwSE4rqzTXsgfx3CQsf/1FTjI4AOOaQLCfZgcgkNwCA7BsX7nn/AU/vwnk2NUgCeDwVF2QAYcZQ1kwCE4BIfgEByCQ9ecB+PL5BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+AQHKquL2XPd8ksUyq0AAAAAElFTkSuQmCC" />
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACSUlEQVR42u3cvU3DUBiGUcei9ApJxRz0SIg1mIk1EBI9c1CFRSgsBQtdBxP/EN33PJWJoLFPvkTmXu+6rmukUq1TIDgEh+AQHIJDcAgOwSE4BIcEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIdq68YpOPXxdNcf3D6/Oxsmh+AQHIJDcAgOwSE4BIcS2nkOad/jw/3wx5fXN+fE5CjIKL4CBxl8wDFNQLiPloz5vwOH4JDgEByC46Km3OlKvhuWPjnOX/vw+6Q+VkYFuIMOR9kBGY1/vA2zNcHkEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkNwOAUay+rzphmsOx9mDXo0jqIJStJxTGQRTqQlY9W/gqN+GZk+WjL4gGOx65rjoyWDD5NDcGz1Rk8YHiaH4BAcW87/6j9ZTA7BITgEh+AQHILjf1pvkU71y39MDsEhODab/wlLSk0OxeNY9o0eshI9aHIsdUVz9ihkfazMv65Ru1fivnPMubpp+5oSv5Bedo0Dd7zZK4sFHH9XYpc9HN8dDvv+4Hj8dDYaN8EEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEBwSHIJDcAgOwSE4rqzTXsgfx3CQsf/1FTjI4AOOaQLCfZgcgkNwCA7BsX7nn/AU/vwnk2NUgCeDwVF2QAYcZQ1kwCE4BIfgEByCQ9ecB+PL5BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+AQHKquL2XPd8ksUyq0AAAAAElFTkSuQmCC" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,274 +19,282 @@
 
 <style>
   :root {
-    --black:   #0B0B0B;
-    --black-2: #111110;
-    --line:    #232321;
-    --line-2:  #1A1A19;
+    --bg:      #0C0C0C;
+    --raised:  #151514;
+    --line:    #232322;
+    --line-2:  #1B1B1A;
 
-    --stone:   #E9E7E2;   /* light stone grey — primary */
-    --stone-2: #A5A29C;
-    --stone-3: #6E6B66;
-    --stone-4: #46443F;
+    --fg:      #E8E6E3;
+    --fg-2:    #9C9995;
+    --fg-3:    #6A6763;
+    --fg-4:    #45433F;
+
+    --accent:  #E8734A;
+    --accent-2:#8C4429;
 
     --font: "Chakra Petch", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
   html { -webkit-text-size-adjust: 100%; }
 
   body {
     margin: 0;
-    padding: 0 0 calc(64px + env(safe-area-inset-bottom));
-    background: var(--black);
-    color: var(--stone);
+    padding: 0 0 calc(72px + env(safe-area-inset-bottom));
+    background: var(--bg);
+    color: var(--fg);
     font-family: var(--font);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.62;
     -webkit-font-smoothing: antialiased;
   }
 
-  .wrap { max-width: 560px; margin: 0 auto; padding: 0 20px; }
+  .wrap { max-width: 580px; margin: 0 auto; padding: 0 24px; }
 
-  /* ---------- type ---------- */
+  /* ---------- masthead ---------- */
   .eyebrow {
-    font-size: 11px; font-weight: 600; letter-spacing: .22em;
-    text-transform: uppercase; color: var(--stone-3);
+    font-size: 12px; font-weight: 600; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .eyebrow.mute { color: var(--fg-3); }
+
+  header { padding: calc(56px + env(safe-area-inset-top)) 0 44px; }
+  header h1 {
+    margin: 26px 0 24px;
+    font-size: clamp(42px, 12vw, 58px);
+    font-weight: 700; line-height: 1.0; letter-spacing: -.005em;
+  }
+  header p {
+    margin: 0; font-size: 17px; font-weight: 300; line-height: 1.62;
+    color: var(--fg-2); max-width: 34ch;
   }
 
-  h1 {
-    margin: 20px 0 18px;
-    font-size: clamp(38px, 11vw, 52px);
-    font-weight: 700; line-height: .94; letter-spacing: .004em;
-    text-transform: uppercase;
-  }
-  h1 em { display: block; font-style: normal; color: var(--stone-3); }
-
-  .intro { margin: 0; font-size: 15px; font-weight: 300; line-height: 1.55; color: var(--stone-2); max-width: 38ch; }
-
-  header { padding: calc(44px + env(safe-area-inset-top)) 0 34px; }
-
-  /* ---------- sticky now bar ---------- */
-  .now {
+  /* ---------- sticky status ---------- */
+  .status-bar {
     position: sticky; top: 0; z-index: 20;
-    margin: 0 -20px; padding: 14px 20px 15px;
-    background: rgba(11,11,11,.72);
-    backdrop-filter: saturate(160%) blur(18px);
-    -webkit-backdrop-filter: saturate(160%) blur(18px);
-    border-bottom: .5px solid var(--line);
+    margin: 0 -24px; padding: 15px 24px 0;
+    background: rgba(12,12,12,.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
-  .now-row { display: flex; align-items: baseline; gap: 12px; }
-  .now-task {
-    font-size: 17px; font-weight: 600; letter-spacing: -.005em;
+  .sb-top { display: flex; align-items: baseline; gap: 14px; }
+  .sb-task {
+    font-size: 17px; font-weight: 600; letter-spacing: -.005em; line-height: 1.3;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .now-count { margin-left: auto; font-size: 12px; font-weight: 500; color: var(--stone-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .now-meta { font-size: 11.5px; font-weight: 400; letter-spacing: .06em; text-transform: uppercase; color: var(--stone-3); margin-top: 4px; }
-
-  .bar { height: 2px; background: var(--line); margin-top: 12px; overflow: hidden; }
-  .bar span { display: block; height: 100%; background: var(--stone); width: 0; transition: width .5s cubic-bezier(.4,0,.2,1); }
-
-  /* ---------- module ---------- */
-  .rail { position: relative; padding-left: 22px; margin-top: 38px; }
-  .rail::before {
-    content: ""; position: absolute; left: 3px; top: 8px; bottom: 26px;
-    width: 1px; background: var(--line);
+  .sb-count {
+    margin-left: auto; font-size: 12px; font-weight: 500; letter-spacing: .1em;
+    color: var(--fg-3); white-space: nowrap; font-variant-numeric: tabular-nums;
   }
-
-  .module { position: relative; margin-bottom: 40px; }
-  .node {
-    position: absolute; left: -22px; top: 7px;
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--line); transition: all .3s ease;
+  .sb-meta {
+    margin-top: 3px; font-size: 11.5px; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--fg-3);
   }
-  .module.is-live .node { background: var(--stone); box-shadow: 0 0 0 5px rgba(233,231,226,.10); }
-  .module.is-done .node { background: var(--stone-4); }
-  .module.is-locked { opacity: .38; }
+  .track { height: 2px; background: var(--line); margin-top: 14px; }
+  .track span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .55s cubic-bezier(.4,0,.2,1); }
 
-  .mod-top { display: flex; align-items: baseline; gap: 10px; }
-  .mod-dates { margin-left: auto; font-size: 11px; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; color: var(--stone-3); white-space: nowrap; }
+  /* ---------- modules ---------- */
+  main { margin-top: 46px; }
+  .module { margin-bottom: 52px; }
+  .module.is-shut { opacity: .34; }
+
+  .mod-top { display: flex; align-items: center; gap: 12px; min-height: 24px; }
+  .mod-dates {
+    margin-left: auto; font-size: 11.5px; font-weight: 400; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--fg-3); white-space: nowrap;
+  }
   .mod-name {
-    margin: 8px 0 0; font-size: 26px; font-weight: 600; line-height: 1.08;
-    letter-spacing: .002em; text-transform: uppercase;
+    margin: 14px 0 0; font-size: 28px; font-weight: 600; line-height: 1.14; letter-spacing: -.01em;
   }
-  .mod-gate { margin: 9px 0 20px; font-size: 13.5px; font-weight: 300; line-height: 1.5; color: var(--stone-2); max-width: 42ch; }
+  .module.is-closed .mod-name { color: var(--fg-2); }
+  .mod-gate {
+    margin: 12px 0 26px; font-size: 15px; font-weight: 300; line-height: 1.6;
+    color: var(--fg-2); max-width: 40ch;
+  }
 
-  /* ---------- task ---------- */
-  .task { border-top: .5px solid var(--line-2); }
-  .task:last-of-type { border-bottom: .5px solid var(--line-2); }
+  /* ---------- tasks ---------- */
+  .task { border-top: 1px solid var(--line-2); }
+  .task:last-of-type { border-bottom: 1px solid var(--line-2); }
 
-  .task-row { display: flex; align-items: center; gap: 13px; padding: 4px 0; }
+  .row { display: flex; align-items: center; }
 
   .tick {
-    flex: 0 0 auto; width: 44px; height: 44px; margin-left: -11px;
-    border: 0; background: none; cursor: pointer; padding: 0;
+    flex: 0 0 auto; width: 46px; height: 60px; margin-left: -13px;
+    border: 0; background: none; padding: 0; cursor: pointer;
     display: grid; place-items: center;
   }
   .tick i {
     display: grid; place-items: center;
-    width: 21px; height: 21px; border-radius: 50%;
-    border: 1.5px solid var(--stone-4);
-    font-style: normal; font-size: 11px; font-weight: 700; color: transparent;
-    transition: background .22s ease, border-color .22s ease, transform .14s ease;
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1.5px solid var(--fg-4);
+    font-style: normal; font-size: 10px; font-weight: 700; color: transparent;
+    transition: background .2s ease, border-color .2s ease, transform .13s ease;
   }
-  .tick:active i { transform: scale(.88); }
-  .task.checked .tick i { background: var(--stone); border-color: var(--stone); color: var(--black); }
-  .tick:disabled { cursor: not-allowed; }
+  .tick:active i { transform: scale(.86); }
+  .task.checked .tick i { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .tick:disabled { cursor: default; }
 
-  .task-open {
+  .body {
     flex: 1 1 auto; min-width: 0; text-align: left;
-    border: 0; background: none; padding: 13px 0; cursor: pointer;
+    border: 0; background: none; padding: 16px 8px 16px 0; cursor: pointer;
     font: inherit; color: inherit;
   }
-  .task-title { display: block; font-size: 15.5px; font-weight: 500; letter-spacing: -.002em; line-height: 1.34; }
-  .task.checked .task-title { color: var(--stone-3); text-decoration: line-through; text-decoration-thickness: 1px; }
-  .task-hrs { display: block; margin-top: 3px; font-size: 11px; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; color: var(--stone-3); }
-  .task.retired .task-title { color: var(--stone-4); }
+  .t-title { display: block; font-size: 16px; font-weight: 500; line-height: 1.38; letter-spacing: -.004em; }
+  .task.checked .t-title { color: var(--fg-3); }
+  .t-meta {
+    display: block; margin-top: 4px; font-size: 11.5px; font-weight: 400;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3);
+  }
+  .task.retired .t-title { color: var(--fg-4); }
+  .task.mine .t-meta { color: var(--accent-2); }
 
   .kill {
-    flex: 0 0 auto; height: 44px; min-width: 44px; padding: 0 4px; margin-right: -8px;
+    flex: 0 0 auto; height: 46px; min-width: 46px; margin-right: -12px;
     border: 0; background: none; cursor: pointer;
     display: grid; place-items: center;
-    font: inherit; font-size: 15px; font-weight: 400; color: var(--stone-4);
+    font: inherit; font-size: 16px; font-weight: 300; color: var(--fg-4);
     transition: color .18s ease;
   }
-  .kill:hover { color: var(--stone-2); }
+  .kill:hover { color: var(--fg-2); }
   .kill.arm {
-    padding: 0 14px; border-radius: 999px; background: var(--stone); color: var(--black);
-    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; height: 30px;
+    min-width: 0; height: 28px; padding: 0 13px; margin-right: 0;
+    border-radius: 999px; background: var(--accent); color: var(--bg);
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   }
 
-  .task-detail {
-    display: none; padding: 0 0 16px 46px;
-    font-size: 13.5px; font-weight: 300; line-height: 1.52; color: var(--stone-2);
+  .detail {
+    display: none; padding: 0 0 20px 46px;
+    font-size: 14.5px; font-weight: 300; line-height: 1.58; color: var(--fg-2);
   }
-  .task.open .task-detail { display: block; }
+  .task.open .detail { display: block; }
 
-  /* ---------- add ---------- */
+  /* ---------- controls ---------- */
   .add {
-    display: flex; align-items: center; gap: 10px;
-    width: 100%; margin-top: 14px; padding: 12px 0;
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 18px; padding: 8px 0;
     border: 0; background: none; cursor: pointer;
-    font: inherit; font-size: 13px; font-weight: 500; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--stone-3);
+    font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--fg-3);
     transition: color .18s ease;
   }
-  .add:hover { color: var(--stone); }
-  .add b { font-weight: 400; font-size: 17px; line-height: 1; }
+  .add:hover { color: var(--accent); }
+  .add b { font-weight: 400; font-size: 16px; line-height: 1; }
 
   .add-module {
-    width: 100%; margin: 4px 0 0; padding: 17px;
-    border: .5px solid var(--line); border-radius: 2px; background: none; cursor: pointer;
-    font: inherit; font-size: 13px; font-weight: 500; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--stone-2);
+    width: 100%; margin-top: 8px; padding: 18px;
+    border: 1px solid var(--line); background: none; cursor: pointer;
+    font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--fg-2);
     transition: border-color .2s ease, color .2s ease;
   }
-  .add-module:hover { border-color: var(--stone-3); color: var(--stone); }
+  .add-module:hover { border-color: var(--accent-2); color: var(--accent); }
 
   .mod-kill {
-    margin-left: 10px; padding: 3px 9px; border: .5px solid var(--line);
-    border-radius: 999px; background: none; cursor: pointer;
-    font: inherit; font-size: 10px; font-weight: 500; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--stone-3);
+    padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px;
+    background: none; cursor: pointer;
+    font: inherit; font-size: 10px; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--fg-3);
     transition: all .18s ease;
   }
-  .mod-kill:hover, .mod-kill.arm { background: var(--stone); border-color: var(--stone); color: var(--black); }
+  .mod-kill:hover, .mod-kill.arm { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 
   /* ---------- rules ---------- */
-  .rules { margin-top: 50px; padding-top: 30px; border-top: .5px solid var(--line); }
-  .rules .eyebrow { display: block; margin-bottom: 22px; }
-  .rule { display: flex; gap: 14px; margin-bottom: 20px; }
-  .rule b { flex: 0 0 auto; font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--stone-4); padding-top: 3px; }
-  .rule p { margin: 0; font-size: 13.5px; font-weight: 300; line-height: 1.52; color: var(--stone-2); }
-  .rule strong { font-weight: 600; color: var(--stone); }
+  .rules { margin-top: 20px; padding-top: 40px; border-top: 1px solid var(--line); }
+  .rules .eyebrow { display: block; margin-bottom: 26px; }
+  .rule { display: flex; gap: 16px; margin-bottom: 22px; }
+  .rule b { flex: 0 0 auto; padding-top: 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: var(--fg-4); }
+  .rule p { margin: 0; font-size: 14.5px; font-weight: 300; line-height: 1.58; color: var(--fg-2); }
+  .rule strong { font-weight: 600; color: var(--fg); }
 
-  footer { margin-top: 44px; text-align: center; }
+  footer { margin-top: 48px; text-align: center; }
   .reset {
-    padding: 11px 22px; border: .5px solid var(--line); border-radius: 999px;
+    padding: 12px 26px; border: 1px solid var(--line); border-radius: 999px;
     background: none; cursor: pointer;
-    font: inherit; font-size: 11px; font-weight: 500; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--stone-3);
+    font: inherit; font-size: 11px; font-weight: 600; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--fg-3);
     transition: all .18s ease;
   }
-  .reset:hover { border-color: var(--stone-3); color: var(--stone); }
-  .reset.arm { background: var(--stone); border-color: var(--stone); color: var(--black); }
-  .status { margin-top: 14px; font-size: 10.5px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: var(--stone-4); min-height: 14px; }
+  .reset:hover { border-color: var(--fg-3); color: var(--fg); }
+  .reset.arm { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .note { margin-top: 16px; font-size: 10.5px; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-4); min-height: 14px; }
 
   /* ---------- sheet ---------- */
   .scrim {
-    position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.6);
-    backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+    position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.62);
     opacity: 0; pointer-events: none; transition: opacity .3s ease;
   }
   .scrim.open { opacity: 1; pointer-events: auto; }
 
   .sheet {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
-    max-width: 560px; margin: 0 auto;
-    background: var(--black-2);
-    border-top: .5px solid var(--line);
-    border-radius: 16px 16px 0 0;
-    padding: 10px 22px calc(24px + env(safe-area-inset-bottom));
+    max-width: 580px; margin: 0 auto;
+    background: var(--raised); border-top: 1px solid var(--line);
+    border-radius: 18px 18px 0 0;
+    padding: 12px 24px calc(28px + env(safe-area-inset-bottom));
     transform: translateY(102%);
-    transition: transform .4s cubic-bezier(.32,.72,0,1);
+    transition: transform .42s cubic-bezier(.32,.72,0,1);
     max-height: 90vh; overflow-y: auto;
   }
   .sheet.open { transform: translateY(0); }
-  .grab { width: 34px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 22px; }
-  .sheet h3 { margin: 0 0 6px; font-size: 21px; font-weight: 600; letter-spacing: .002em; text-transform: uppercase; }
-  .sheet .sub { margin: 0 0 24px; font-size: 13px; font-weight: 300; line-height: 1.5; color: var(--stone-3); }
+  .grab { width: 36px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 24px; }
+  .sheet h3 { margin: 0 0 8px; font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
+  .sheet .sub { margin: 0 0 28px; font-size: 14.5px; font-weight: 300; line-height: 1.55; color: var(--fg-3); }
 
-  .field { margin-bottom: 18px; }
-  .field label { display: block; margin-bottom: 8px; font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--stone-3); }
+  .field { margin-bottom: 22px; }
+  .field label {
+    display: block; margin-bottom: 9px; font-size: 11px; font-weight: 600;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3);
+  }
   .field input, .field textarea, .field select {
-    width: 100%; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line);
+    width: 100%; padding: 11px 0; border: 0; border-bottom: 1px solid var(--line);
     background: none; border-radius: 0;
-    font: inherit; font-size: 16px; font-weight: 400; color: var(--stone);
+    font: inherit; font-size: 16.5px; font-weight: 400; color: var(--fg);
     -webkit-appearance: none; appearance: none;
   }
-  .field textarea { min-height: 62px; resize: vertical; line-height: 1.45; }
+  .field textarea { min-height: 60px; resize: vertical; line-height: 1.5; }
   .field select {
-    background-image: linear-gradient(45deg, transparent 50%, var(--stone-3) 50%), linear-gradient(135deg, var(--stone-3) 50%, transparent 50%);
-    background-position: calc(100% - 11px) 20px, calc(100% - 6px) 20px;
-    background-size: 5px 5px; background-repeat: no-repeat; padding-right: 26px;
+    padding-right: 26px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--fg-3) 50%), linear-gradient(135deg, var(--fg-3) 50%, transparent 50%);
+    background-position: calc(100% - 11px) 21px, calc(100% - 6px) 21px;
+    background-size: 5px 5px; background-repeat: no-repeat;
   }
-  .field input:focus, .field textarea:focus, .field select:focus { outline: 0; border-bottom-color: var(--stone); }
-  .field input::placeholder, .field textarea::placeholder { color: var(--stone-4); }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: 0; border-bottom-color: var(--accent); }
+  .field input::placeholder, .field textarea::placeholder { color: var(--fg-4); }
 
-  .acts { display: flex; gap: 10px; margin-top: 28px; }
+  .acts { display: flex; gap: 11px; margin-top: 32px; }
   .acts button {
-    flex: 1; padding: 15px; border-radius: 999px; cursor: pointer;
-    font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-    transition: opacity .18s ease, transform .12s ease;
+    flex: 1; padding: 16px; border-radius: 999px; cursor: pointer;
+    font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+    transition: transform .12s ease;
   }
   .acts button:active { transform: scale(.97); }
-  .no  { border: .5px solid var(--line); background: none; color: var(--stone-2); }
-  .yes { border: 0; background: var(--stone); color: var(--black); }
+  .no  { border: 1px solid var(--line); background: none; color: var(--fg-2); }
+  .yes { border: 0; background: var(--accent); color: var(--bg); }
 
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
 </style>
 </head>
 <body>
 
 <div class="wrap">
+
   <header>
-    <span class="eyebrow">Execution order · Aug 2026 — Mar 2027</span>
-    <h1>Nine things<em>Two at a time</em></h1>
-    <p class="intro">Each module opens only when the one before it closes. Everything below the live marker stays shut.</p>
+    <span class="eyebrow">Data engineering · Certification · Projects</span>
+    <h1>Execution Order</h1>
+    <p>Nine things, two at a time. Each module opens only when the one before it closes.</p>
   </header>
 
-  <div class="now">
-    <div class="now-row">
-      <span class="now-task" id="nowTask">Loading</span>
-      <span class="now-count" id="nowCount"></span>
+  <div class="status-bar">
+    <div class="sb-top">
+      <span class="sb-task" id="nowTask">Loading</span>
+      <span class="sb-count" id="nowCount"></span>
     </div>
-    <div class="now-meta" id="nowMeta"></div>
-    <div class="bar"><span id="bar"></span></div>
+    <div class="sb-meta" id="nowMeta"></div>
+    <div class="track"><span id="track"></span></div>
   </div>
 
-  <main class="rail" id="rail"></main>
+  <main id="rail"></main>
   <button class="add-module" id="addModule">＋ &nbsp;Add module</button>
 
   <section class="rules">
@@ -299,8 +307,9 @@
 
   <footer>
     <button class="reset" id="reset">Reset</button>
-    <div class="status" id="status"></div>
+    <div class="note" id="note"></div>
   </footer>
+
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -326,14 +335,14 @@ const BASE = [
         dod:"Trial account live. You can explain virtual warehouses and credit burn, micro-partitions and clustering, Streams and Tasks, Time Travel and zero-copy clone." }
     ] },
   { id:"p1", name:"Land the role", dates:"Aug 31 – Sep 27",
-    gate:"Opens when Module 00 closes. Weeks 1–4 of the new job — assume most evenings are gone. Snowflake and modelling continue on the job, not as separate study.",
+    gate:"Opens when Runway closes. Weeks 1–4 of the new job, so assume most evenings are gone. Snowflake and modelling continue on the job, not as separate study.",
     tasks:[
       { id:"asyncio", title:"asyncio essentials", hrs:"~6 hrs",
         dod:"Guide sections 1.1–1.9 read and typed out. Drills 1–5, 8 and 12 done. You can explain why a for-loop with await inside runs sequentially." },
       { id:"pytest", title:"pytest for pipelines", hrs:"~5 hrs",
         dod:"Fixtures, parametrize, monkeypatch, pytest-asyncio. Tests written for one real model at work: grain uniqueness, dimension key uniqueness, no orphan keys, a null case." },
       { id:"jsts", title:"JavaScript / TypeScript", retired:true, hrs:"Retired",
-        dod:"This was for the role you're leaving. It returns in Module 02 as applied work on Oweless, which is React — better practice than drills anyway." }
+        dod:"This was for the role you're leaving. It returns in Ship Oweless as applied work, since that's a React app — better practice than drills anyway." }
     ] },
   { id:"p2", name:"Ship Oweless", dates:"Sep 28 – Oct 18",
     gate:"Opens when pytest closes and work feels routine. Three weeks, but really one focused weekend plus slack for what breaks.",
@@ -344,7 +353,7 @@ const BASE = [
         dod:"Resist new features. A bug that stops someone splitting an expense gets fixed; everything else goes on a list." }
     ] },
   { id:"p3", name:"Network+", dates:"Oct 19 – Dec 13",
-    gate:"Opens when Oweless is live. Eight weeks at 6–8 hrs, the honest number for N10-009.",
+    gate:"Opens when Oweless is live. Eight weeks at 6–8 hrs a week, the honest number for N10-009.",
     tasks:[
       { id:"netstudy", title:"Work the N10-009 objectives", hrs:"~50 hrs",
         dod:"Full objectives list covered. OSI layers, subnetting by hand, routing and switching, DNS/DHCP, wireless, and the troubleshooting methodology." },
@@ -385,12 +394,12 @@ function plan(){
   mods.forEach(m => { m.tasks = m.tasks.filter(t => !S.deleted[t.id]); });
   return mods;
 }
-const live1 = t => !t.retired;
-const done1 = m => m.tasks.filter(live1).every(t => S.done[t.id]);
-function liveIndex(mods){ let i=0; while (i<mods.length && done1(mods[i])) i++; return i; }
+const counts = t => !t.retired;
+const isDone = m => m.tasks.filter(counts).every(t => S.done[t.id]);
+function liveIndex(mods){ let i=0; while (i<mods.length && isDone(mods[i])) i++; return i; }
 
 const railEl = document.getElementById("rail");
-const statusEl = document.getElementById("status");
+const noteEl = document.getElementById("note");
 
 function render(){
   const mods = plan();
@@ -398,40 +407,39 @@ function render(){
   railEl.innerHTML = "";
 
   mods.forEach((m,i) => {
-    const locked = i > live;
-    const cls = i < live ? "is-done" : (i === live ? "is-live" : "is-locked");
-    const state = locked ? "Shut" : (i < live ? "Closed" : "Live");
+    const shut = i > live;
+    const cls = i < live ? "is-closed" : (i === live ? "is-live" : "is-shut");
+    const state = shut ? "Shut" : (i < live ? "Closed" : "Live");
 
     const sec = document.createElement("section");
     sec.className = "module " + cls;
     sec.innerHTML =
-      '<span class="node"></span>' +
-      '<div class="mod-top"><span class="eyebrow">Module '+pad(i)+' · '+state+'</span>' +
-      (m.mine ? '<button class="mod-kill" data-mod="'+esc(m.id)+'">Remove</button>' : '') +
-      '<span class="mod-dates">'+esc(m.dates||"")+'</span></div>' +
+      '<div class="mod-top">' +
+        '<span class="eyebrow'+(i===live?"":" mute")+'">'+pad(i)+' · '+state+'</span>' +
+        (m.mine ? '<button class="mod-kill" data-mod="'+esc(m.id)+'">Remove</button>' : '') +
+        '<span class="mod-dates">'+esc(m.dates||"")+'</span>' +
+      '</div>' +
       '<h2 class="mod-name">'+esc(m.name)+'</h2>' +
       (m.gate ? '<p class="mod-gate">'+esc(m.gate)+'</p>' : '');
 
     m.tasks.forEach(t => {
       const on = !!S.done[t.id];
       const row = document.createElement("div");
-      row.className = "task" + (on?" checked":"") + (t.retired?" retired":"") + (S.open[t.id]?" open":"");
+      row.className = "task" + (on?" checked":"") + (t.retired?" retired":"") + (t.mine?" mine":"") + (S.open[t.id]?" open":"");
       row.innerHTML =
-        '<div class="task-row">' +
-          '<button class="tick"'+((locked||t.retired)?" disabled":"")+' aria-label="Toggle"><i>✓</i></button>' +
-          '<button class="task-open">' +
-            '<span class="task-title">'+esc(t.title)+'</span>' +
-            (t.hrs ? '<span class="task-hrs">'+esc(t.hrs)+'</span>' : '') +
+        '<div class="row">' +
+          '<button class="tick"'+((shut||t.retired)?" disabled":"")+' aria-label="Toggle"><i>✓</i></button>' +
+          '<button class="body">' +
+            '<span class="t-title">'+esc(t.title)+'</span>' +
+            (t.hrs ? '<span class="t-meta">'+esc(t.hrs)+'</span>' : '') +
           '</button>' +
           '<button class="kill" data-task="'+esc(t.id)+'" aria-label="Delete">✕</button>' +
         '</div>' +
-        (t.dod ? '<div class="task-detail">'+esc(t.dod)+'</div>' : '');
+        (t.dod ? '<div class="detail">'+esc(t.dod)+'</div>' : '');
 
       const tick = row.querySelector(".tick");
       if (!tick.disabled) tick.addEventListener("click", () => toggle(t.id));
-      row.querySelector(".task-open").addEventListener("click", () => {
-        S.open[t.id] = !S.open[t.id]; render();
-      });
+      row.querySelector(".body").addEventListener("click", () => { S.open[t.id] = !S.open[t.id]; render(); });
       sec.appendChild(row);
     });
 
@@ -444,7 +452,7 @@ function render(){
     railEl.appendChild(sec);
   });
 
-  const all = mods.flatMap(m => m.tasks).filter(live1);
+  const all = mods.flatMap(m => m.tasks).filter(counts);
   const closed = all.filter(t => S.done[t.id]).length;
   const nowTask = document.getElementById("nowTask");
   const nowMeta = document.getElementById("nowMeta");
@@ -453,19 +461,19 @@ function render(){
   else if (live >= mods.length) { nowTask.textContent = "All closed"; nowMeta.textContent = "Write the next plan"; }
   else {
     const m = mods[live];
-    const next = m.tasks.filter(live1).find(t => !S.done[t.id]);
+    const next = m.tasks.filter(counts).find(t => !S.done[t.id]);
     nowTask.textContent = next ? next.title : m.name;
-    const active = m.tasks.filter(live1).filter(t => !S.done[t.id]).length;
-    nowMeta.textContent = "Module "+pad(live)+" · "+m.name+" · "+active+" active";
+    const active = m.tasks.filter(counts).filter(t => !S.done[t.id]).length;
+    nowMeta.textContent = m.name + " · " + active + " active";
   }
 
   document.getElementById("nowCount").textContent = closed + " / " + all.length;
-  document.getElementById("bar").style.width = (all.length ? (closed/all.length*100) : 0) + "%";
+  document.getElementById("track").style.width = (all.length ? (closed/all.length*100) : 0) + "%";
 }
 
 async function save(){
-  try { await store.set(KEY, JSON.stringify(S)); statusEl.textContent = "Saved"; }
-  catch(e){ statusEl.textContent = "Session only"; }
+  try { await store.set(KEY, JSON.stringify(S)); noteEl.textContent = "Saved"; }
+  catch(e){ noteEl.textContent = "Session only"; }
 }
 function toggle(id){ S.done[id] = !S.done[id]; render(); save(); }
 
@@ -496,7 +504,7 @@ function openSheet(title, sub, html, submit){
   sheetFields.innerHTML = html;
   onSubmit = submit;
   scrim.classList.add("open"); sheet.classList.add("open");
-  setTimeout(() => { const f = sheetFields.querySelector("input,textarea,select"); if (f) f.focus(); }, 380);
+  setTimeout(() => { const f = sheetFields.querySelector("input,textarea,select"); if (f) f.focus(); }, 400);
 }
 function closeSheet(){ scrim.classList.remove("open"); sheet.classList.remove("open"); onSubmit = null; }
 scrim.addEventListener("click", closeSheet);
@@ -506,8 +514,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet()
 
 function openTaskSheet(moduleId){
   const opts = plan().map((m,i) =>
-    '<option value="'+esc(m.id)+'"'+(m.id===moduleId?" selected":"")+'>Module '+pad(i)+' · '+esc(m.name)+'</option>').join("");
-  openSheet("Add task", "It has to belong to a module — that's what keeps the list honest.",
+    '<option value="'+esc(m.id)+'"'+(m.id===moduleId?" selected":"")+'>'+pad(i)+' · '+esc(m.name)+'</option>').join("");
+  openSheet("Add task", "It has to belong to a module. That's what keeps the list honest.",
     '<div class="field"><label for="fTitle">Task</label><input id="fTitle" type="text" placeholder="Subnetting practice" autocomplete="off" /></div>' +
     '<div class="field"><label for="fHrs">Estimate</label><input id="fHrs" type="text" placeholder="~4 hrs" autocomplete="off" /></div>' +
     '<div class="field"><label for="fDod">What done looks like</label><textarea id="fDod" placeholder="Twenty /26 splits by hand, under a minute each."></textarea></div>' +
@@ -539,15 +547,15 @@ document.getElementById("reset").addEventListener("click", e => {
   armed(e.currentTarget, "Erase all", async () => {
     S = { done:{}, custom:[], modules:[], deleted:{}, open:{} };
     render();
-    try { await store.del(KEY); statusEl.textContent = "Reset"; }
-    catch(err){ statusEl.textContent = "Cleared"; }
+    try { await store.del(KEY); noteEl.textContent = "Reset"; }
+    catch(err){ noteEl.textContent = "Cleared"; }
   });
 });
 
 (async function boot(){
   try { const raw = await store.get(KEY); if (raw) S = Object.assign({done:{},custom:[],modules:[],deleted:{},open:{}}, JSON.parse(raw)); }
   catch(e){}
-  statusEl.textContent = "";
+  noteEl.textContent = "";
   render();
 })();
 render();

@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Execution Order</title>
+<title>Tracker</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Execution" />
+<meta name="apple-mobile-web-app-title" content="Tracker" />
 <meta name="theme-color" content="#0C0C0C" />
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACSUlEQVR42u3cvU3DUBiGUcei9ApJxRz0SIg1mIk1EBI9c1CFRSgsBQtdBxP/EN33PJWJoLFPvkTmXu+6rmukUq1TIDgEh+AQHIJDcAgOwSE4BIcEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIdq68YpOPXxdNcf3D6/Oxsmh+AQHIJDcAgOwSE4BIcS2nkOad/jw/3wx5fXN+fE5CjIKL4CBxl8wDFNQLiPloz5vwOH4JDgEByC46Km3OlKvhuWPjnOX/vw+6Q+VkYFuIMOR9kBGY1/vA2zNcHkEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkNwOAUay+rzphmsOx9mDXo0jqIJStJxTGQRTqQlY9W/gqN+GZk+WjL4gGOx65rjoyWDD5NDcGz1Rk8YHiaH4BAcW87/6j9ZTA7BITgEh+AQHILjf1pvkU71y39MDsEhODab/wlLSk0OxeNY9o0eshI9aHIsdUVz9ihkfazMv65Ru1fivnPMubpp+5oSv5Bedo0Dd7zZK4sFHH9XYpc9HN8dDvv+4Hj8dDYaN8EEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEBwSHIJDcAgOwSE4rqzTXsgfx3CQsf/1FTjI4AOOaQLCfZgcgkNwCA7BsX7nn/AU/vwnk2NUgCeDwVF2QAYcZQ1kwCE4BIfgEByCQ9ecB+PL5BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+AQHKquL2XPd8ksUyq0AAAAAElFTkSuQmCC" />
-<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACSUlEQVR42u3cvU3DUBiGUcei9ApJxRz0SIg1mIk1EBI9c1CFRSgsBQtdBxP/EN33PJWJoLFPvkTmXu+6rmukUq1TIDgEh+AQHIJDcAgOwSE4BIcEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIdq68YpOPXxdNcf3D6/Oxsmh+AQHIJDcAgOwSE4BIcS2nkOad/jw/3wx5fXN+fE5CjIKL4CBxl8wDFNQLiPloz5vwOH4JDgEByC46Km3OlKvhuWPjnOX/vw+6Q+VkYFuIMOR9kBGY1/vA2zNcHkEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkNwOAUay+rzphmsOx9mDXo0jqIJStJxTGQRTqQlY9W/gqN+GZk+WjL4gGOx65rjoyWDD5NDcGz1Rk8YHiaH4BAcW87/6j9ZTA7BITgEh+AQHILjf1pvkU71y39MDsEhODab/wlLSk0OxeNY9o0eshI9aHIsdUVz9ihkfazMv65Ru1fivnPMubpp+5oSv5Bedo0Dd7zZK4sFHH9XYpc9HN8dDvv+4Hj8dDYaN8EEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEBwSHIJDcAgOwSE4rqzTXsgfx3CQsf/1FTjI4AOOaQLCfZgcgkNwCA7BsX7nn/AU/vwnk2NUgCeDwVF2QAYcZQ1kwCE4BIfgEByCQ9ecB+PL5BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+AQHKquL2XPd8ksUyq0AAAAAElFTkSuQmCC" />
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAC6UlEQVR42u3czU3rQBSA0cTKMl3gOrJHQrSRmtIGQmKfOkwvLCwZy/gvjsjczJxvBy+LN5nzru0Jj/3xeNxJY1XeAsEhOASH4BAcgkNwCA7BITgkOASH4BAcgkNwCA7BITgEhwSH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHIJD+tMh1N+mOZ/6X9aXqx1K2D7I7z4fsEAEjgUWiBSNY/464irjnuN340c1rBwtympydLs+g2DwRzcNjwxUpR2WUR5lpzZy2wY351Me8ybtQqoIY2N+/c351P0DcokpcXI8/vHHikrEITgEx7Pd4ee0oir5gvv3m1Ov3PYoq0wmx9Sub9NQX655MEq7kCjH52tOSI2NBxfl+LwVMP/ZisqaHDufysJxDxEsSscxSgQLOORRVnAIDsEhOCQ4BIfgEByCQ3AIDsEhOASHBIfgEBz6l2L9NsH3t9f+lx+fX3YoYVF+hnTAAhE4FlggUjSO+euIq4x7jsmNb7+5crQoq8nR7friSFj/yg0XrMilHZaHLMlnM2zahaQiUiXfvzUr717jElMEDmMj/oqckAoOwbHL8TikuBvSm+4xtz3KyqPspDznHHcW5fh85l0wNkqfHKOnPU410uZTWQXGsUgEi9JxjBLBAg4FzQmp4BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh569WP+pqa5f+l82zbcdSliUnyEdsEAEjgUWiBSNY/464irjnmNy49tvrhwtympydLu+OBLWv3LDBStyaYdlnr+CIZth0y4kFZEq+f6tWXn3GpeYInAYG/FX5IRUcAiOXY7HIcXdkN50j7ntUVYeZSflOee4syjH5zPvgrFR+uQYPe1xqpE2n8oqMI5FIliUjmOUCBZwKGhOSAWH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+AQHIJDcKjgfgBRQ/zYFvlolAAAAABJRU5ErkJggg==" />
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAC6UlEQVR42u3czU3rQBSA0cTKMl3gOrJHQrSRmtIGQmKfOkwvLCwZy/gvjsjczJxvBy+LN5nzru0Jj/3xeNxJY1XeAsEhOASH4BAcgkNwCA7BITgkOASH4BAcgkNwCA7BITgEhwSH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHIJD+tMh1N+mOZ/6X9aXqx1K2D7I7z4fsEAEjgUWiBSNY/464irjnuN340c1rBwtympydLs+g2DwRzcNjwxUpR2WUR5lpzZy2wY351Me8ybtQqoIY2N+/c351P0DcokpcXI8/vHHikrEITgEx7Pd4ee0oir5gvv3m1Ov3PYoq0wmx9Sub9NQX655MEq7kCjH52tOSI2NBxfl+LwVMP/ZisqaHDufysJxDxEsSscxSgQLOORRVnAIDsEhOCQ4BIfgEByCQ3AIDsEhOASHBIfgEBz6l2L9NsH3t9f+lx+fX3YoYVF+hnTAAhE4FlggUjSO+euIq4x7jsmNb7+5crQoq8nR7friSFj/yg0XrMilHZaHLMlnM2zahaQiUiXfvzUr717jElMEDmMj/oqckAoOwbHL8TikuBvSm+4xtz3KyqPspDznHHcW5fh85l0wNkqfHKOnPU410uZTWQXGsUgEi9JxjBLBAg4FzQmp4BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh569WP+pqa5f+l82zbcdSliUnyEdsEAEjgUWiBSNY/464irjnmNy49tvrhwtympydLu+OBLWv3LDBStyaYdlnr+CIZth0y4kFZEq+f6tWXn3GpeYInAYG/FX5IRUcAiOXY7HIcXdkN50j7ntUVYeZSflOee4syjH5zPvgrFR+uQYPe1xqpE2n8oqMI5FIliUjmOUCBZwKGhOSAWH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+AQHIJDcKjgfgBRQ/zYFvlolAAAAABJRU5ErkJggg==" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,774 +19,857 @@
 
 <style>
   :root {
-    --bg:      #0C0C0C;
-    --raised:  #151514;
-    --line:    #232322;
-    --line-2:  #1B1B1A;
+    --bg:#0C0C0C; --raised:#151514; --line:#232322; --line-2:#1B1B1A;
+    --fg:#E8E6E3; --fg-2:#9C9995; --fg-3:#6A6763; --fg-4:#45433F;
+    --accent:#E8734A; --accent-2:#8C4429; --warn:#C0392B;
+    --font:"Chakra Petch",-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;padding:0 0 calc(96px + env(safe-area-inset-bottom));
+    background:var(--bg);color:var(--fg);font-family:var(--font);
+    font-size:17px;font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:580px;margin:0 auto;padding:0 22px}
 
-    --fg:      #E8E6E3;
-    --fg-2:    #9C9995;
-    --fg-3:    #6A6763;
-    --fg-4:    #45433F;
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+  .eyebrow.mute{color:var(--fg-3)}
 
-    --accent:  #E8734A;
-    --accent-2:#8C4429;
+  header{padding:calc(46px + env(safe-area-inset-top)) 0 22px}
+  header h1{margin:20px 0 0;font-size:clamp(38px,11vw,52px);font-weight:700;line-height:1;letter-spacing:-.01em}
+  header p{margin:14px 0 0;font-size:16px;font-weight:300;line-height:1.6;color:var(--fg-2);max-width:36ch}
 
-    --font: "Chakra Petch", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  /* ---------- tabs ---------- */
+  .tabs-wrap{
+    position:sticky;top:0;z-index:20;margin:26px -22px 0;padding:12px 0 0;
+    background:rgba(12,12,12,.86);
+    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
   }
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding:0 22px 12px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;padding:9px 16px;border:1px solid var(--line);border-radius:999px;
+    background:none;cursor:pointer;font:inherit;font-size:13px;font-weight:600;
+    letter-spacing:.06em;color:var(--fg-3);white-space:nowrap;transition:all .18s ease;
+  }
+  .tab:hover{color:var(--fg-2)}
+  .tab.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+  .tab .n{opacity:.6;margin-left:7px;font-weight:400}
+  .tab-add{flex:0 0 auto;padding:9px 14px;border:1px dashed var(--line);border-radius:999px;background:none;cursor:pointer;color:var(--fg-3);font-size:15px;line-height:1}
+  .track{height:2px;background:var(--line)}
+  .track span{display:block;height:100%;width:0;background:var(--accent);transition:width .5s cubic-bezier(.4,0,.2,1)}
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html { -webkit-text-size-adjust: 100%; }
-
-  body {
-    margin: 0;
-    padding: 0 0 calc(72px + env(safe-area-inset-bottom));
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font);
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.62;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrap { max-width: 580px; margin: 0 auto; padding: 0 24px; }
-
-  /* ---------- masthead ---------- */
-  .eyebrow {
-    font-size: 12px; font-weight: 600; letter-spacing: .2em;
-    text-transform: uppercase; color: var(--accent);
-  }
-  .eyebrow.mute { color: var(--fg-3); }
-
-  header { padding: calc(56px + env(safe-area-inset-top)) 0 44px; }
-  header h1 {
-    margin: 26px 0 24px;
-    font-size: clamp(42px, 12vw, 58px);
-    font-weight: 700; line-height: 1.0; letter-spacing: -.005em;
-  }
-  header p {
-    margin: 0; font-size: 17px; font-weight: 300; line-height: 1.62;
-    color: var(--fg-2); max-width: 34ch;
-  }
-
-  /* ---------- sticky status ---------- */
-  .status-bar {
-    position: sticky; top: 0; z-index: 20;
-    margin: 0 -24px; padding: 15px 24px 0;
-    background: rgba(12,12,12,.8);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-  }
-  .sb-top { display: flex; align-items: baseline; gap: 14px; }
-  .sb-task {
-    font-size: 17px; font-weight: 600; letter-spacing: -.005em; line-height: 1.3;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .sb-count {
-    margin-left: auto; font-size: 12px; font-weight: 500; letter-spacing: .1em;
-    color: var(--fg-3); white-space: nowrap; font-variant-numeric: tabular-nums;
-  }
-  .sb-meta {
-    margin-top: 3px; font-size: 11.5px; font-weight: 500; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--fg-3);
-  }
-  .track { height: 2px; background: var(--line); margin-top: 14px; }
-  .track span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .55s cubic-bezier(.4,0,.2,1); }
-
-  /* ---------- modules ---------- */
-  main { margin-top: 46px; }
-  .module { margin-bottom: 52px; }
-  .module.is-shut { opacity: .34; }
-
-  .mod-top { display: flex; align-items: center; gap: 12px; min-height: 24px; }
-  .mod-dates {
-    margin-left: auto; font-size: 11.5px; font-weight: 400; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--fg-3); white-space: nowrap;
-  }
-  .mod-name {
-    margin: 14px 0 0; font-size: 28px; font-weight: 600; line-height: 1.14; letter-spacing: -.01em;
-  }
-  .module.is-closed .mod-name { color: var(--fg-2); }
-  .mod-gate {
-    margin: 12px 0 26px; font-size: 15px; font-weight: 300; line-height: 1.6;
-    color: var(--fg-2); max-width: 40ch;
-  }
+  /* ---------- tab head ---------- */
+  .tabhead{display:flex;align-items:baseline;gap:12px;margin:30px 0 6px}
+  .tabhead h2{margin:0;font-size:26px;font-weight:600;letter-spacing:-.01em}
+  .tabhead .meta{margin-left:auto;font-size:11.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3);white-space:nowrap}
+  .tabnote{margin:0 0 22px;font-size:14.5px;font-weight:300;line-height:1.6;color:var(--fg-2);max-width:40ch}
 
   /* ---------- tasks ---------- */
-  .task { border-top: 1px solid var(--line-2); }
-  .task:last-of-type { border-bottom: 1px solid var(--line-2); }
+  .task{border-top:1px solid var(--line-2);position:relative}
+  .task:last-of-type{border-bottom:1px solid var(--line-2)}
+  .task.drag{background:var(--raised);border-radius:8px;border-color:transparent}
+  .row{display:flex;align-items:center}
+  .tick{flex:0 0 auto;width:46px;height:62px;margin-left:-13px;border:0;background:none;padding:0;cursor:pointer;display:grid;place-items:center}
+  .tick i{
+    display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
+    border:1.5px solid var(--fg-4);font-style:normal;font-size:10px;font-weight:700;color:transparent;
+    transition:background .2s ease,border-color .2s ease,transform .13s ease;
+  }
+  .tick:active i{transform:scale(.86)}
+  .task.done .tick i{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+  .body{flex:1 1 auto;min-width:0;text-align:left;border:0;background:none;padding:15px 8px 15px 0;cursor:pointer;font:inherit;color:inherit}
+  .t-title{display:block;font-size:16px;font-weight:500;line-height:1.38}
+  .task.done .t-title{color:var(--fg-3);text-decoration:line-through;text-decoration-color:var(--fg-4)}
+  .t-sub{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:5px;font-size:11.5px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3)}
+  .t-sub .due.soon{color:var(--accent)}
+  .t-sub .due.late{color:var(--warn)}
+  .t-sub .exp{color:var(--fg-4)}
+  .kill{flex:0 0 auto;height:46px;min-width:46px;margin-right:-10px;border:0;background:none;cursor:pointer;display:grid;place-items:center;font:inherit;font-size:16px;font-weight:300;color:var(--fg-4);transition:color .18s ease}
+  .kill:hover{color:var(--fg-2)}
+  .kill.arm{min-width:0;height:28px;padding:0 13px;margin-right:0;border-radius:999px;background:var(--warn);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 
-  .row { display: flex; align-items: center; }
+  .movers{display:flex;gap:8px;align-items:center;padding:0 0 14px 46px}
+  .movers button{
+    padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:none;cursor:pointer;
+    font:inherit;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-2);
+  }
+  .movers button.go{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+  .movers button:disabled{opacity:.3;cursor:default}
 
-  .tick {
-    flex: 0 0 auto; width: 46px; height: 60px; margin-left: -13px;
-    border: 0; background: none; padding: 0; cursor: pointer;
-    display: grid; place-items: center;
-  }
-  .tick i {
-    display: grid; place-items: center;
-    width: 20px; height: 20px; border-radius: 50%;
-    border: 1.5px solid var(--fg-4);
-    font-style: normal; font-size: 10px; font-weight: 700; color: transparent;
-    transition: background .2s ease, border-color .2s ease, transform .13s ease;
-  }
-  .tick:active i { transform: scale(.86); }
-  .task.checked .tick i { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-  .tick:disabled { cursor: default; }
+  .empty{padding:40px 0;text-align:center;font-size:14.5px;font-weight:300;color:var(--fg-3)}
 
-  .body {
-    flex: 1 1 auto; min-width: 0; text-align: left;
-    border: 0; background: none; padding: 16px 8px 16px 0; cursor: pointer;
-    font: inherit; color: inherit;
-  }
-  .t-title { display: block; font-size: 16px; font-weight: 500; line-height: 1.38; letter-spacing: -.004em; }
-  .task.checked .t-title { color: var(--fg-3); }
-  .t-meta {
-    display: block; margin-top: 4px; font-size: 11.5px; font-weight: 400;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3);
-  }
-  .task.retired .t-title { color: var(--fg-4); }
-  .task.mine .t-meta { color: var(--accent-2); }
+  /* ---------- buttons ---------- */
+  .add{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:8px 0;border:0;background:none;cursor:pointer;font:inherit;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-3);transition:color .18s ease}
+  .add:hover{color:var(--accent)}
+  .add b{font-weight:400;font-size:16px;line-height:1}
 
-  .kill {
-    flex: 0 0 auto; height: 46px; min-width: 46px; margin-right: -12px;
-    border: 0; background: none; cursor: pointer;
-    display: grid; place-items: center;
-    font: inherit; font-size: 16px; font-weight: 300; color: var(--fg-4);
-    transition: color .18s ease;
+  .fab{
+    position:fixed;right:22px;bottom:calc(24px + env(safe-area-inset-bottom));z-index:30;
+    width:54px;height:54px;border:0;border-radius:50%;cursor:pointer;
+    background:var(--accent);color:var(--bg);font-size:26px;line-height:1;font-weight:300;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);
   }
-  .kill:hover { color: var(--fg-2); }
-  .kill.arm {
-    min-width: 0; height: 28px; padding: 0 13px; margin-right: 0;
-    border-radius: 999px; background: var(--accent); color: var(--bg);
-    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  }
+  .fab:active{transform:scale(.94)}
 
-  .detail {
-    display: none; padding: 0 0 20px 46px;
-    font-size: 14.5px; font-weight: 300; line-height: 1.58; color: var(--fg-2);
+  .topbar{display:flex;align-items:center;gap:10px}
+  .tools{margin-left:auto;display:flex;gap:6px}
+  .tool{
+    position:relative;width:38px;height:38px;border:1px solid var(--line);border-radius:11px;
+    background:none;cursor:pointer;color:var(--fg-3);display:grid;place-items:center;
+    transition:color .18s ease,border-color .18s ease,background .18s ease;
   }
-  .task.open .detail { display: block; }
+  .tool:hover{color:var(--fg);border-color:var(--fg-4)}
+  .tool:active{transform:scale(.94)}
+  .tool svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .badge{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--fg-4);border:2px solid var(--bg);transition:background .25s}
+  .badge.on{background:var(--accent)} .badge.busy{background:var(--fg-2)} .badge.err{background:var(--warn)} .badge.off{display:none}
+  .tool.live{color:var(--accent);border-color:var(--accent-2)}
 
-  /* ---------- controls ---------- */
-  .add {
-    display: inline-flex; align-items: center; gap: 9px;
-    margin-top: 18px; padding: 8px 0;
-    border: 0; background: none; cursor: pointer;
-    font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .16em;
-    text-transform: uppercase; color: var(--fg-3);
-    transition: color .18s ease;
+  .mrow{
+    display:flex;align-items:center;gap:15px;width:100%;padding:17px 0;
+    border:0;border-top:1px solid var(--line-2);background:none;cursor:pointer;font:inherit;color:var(--fg);text-align:left;
   }
-  .add:hover { color: var(--accent); }
-  .add b { font-weight: 400; font-size: 16px; line-height: 1; }
+  .mrow:first-child{border-top:0}
+  .mrow .ic{flex:0 0 auto;color:var(--fg-3);display:grid;place-items:center}
+  .mrow .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .mrow.hot .ic{color:var(--accent)}
+  .mrow .lab{flex:1;min-width:0}
+  .mrow .lab b{display:block;font-size:15.5px;font-weight:500;letter-spacing:-.005em}
+  .mrow .lab span{display:block;margin-top:3px;font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--fg-3)}
+  .mrow .chev{flex:0 0 auto;color:var(--fg-4);font-size:17px;font-weight:300}
 
-  .add-module {
-    width: 100%; margin-top: 8px; padding: 18px;
-    border: 1px solid var(--line); background: none; cursor: pointer;
-    font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .16em;
-    text-transform: uppercase; color: var(--fg-2);
-    transition: border-color .2s ease, color .2s ease;
-  }
-  .add-module:hover { border-color: var(--accent-2); color: var(--accent); }
-
-  .mod-kill {
-    padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px;
-    background: none; cursor: pointer;
-    font: inherit; font-size: 10px; font-weight: 600; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--fg-3);
-    transition: all .18s ease;
-  }
-  .mod-kill:hover, .mod-kill.arm { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-
-  /* ---------- rules ---------- */
-  .rules { margin-top: 20px; padding-top: 40px; border-top: 1px solid var(--line); }
-  .rules .eyebrow { display: block; margin-bottom: 26px; }
-  .rule { display: flex; gap: 16px; margin-bottom: 22px; }
-  .rule b { flex: 0 0 auto; padding-top: 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: var(--fg-4); }
-  .rule p { margin: 0; font-size: 14.5px; font-weight: 300; line-height: 1.58; color: var(--fg-2); }
-  .rule strong { font-weight: 600; color: var(--fg); }
-
-  footer { margin-top: 48px; text-align: center; }
-  .reset {
-    padding: 12px 26px; border: 1px solid var(--line); border-radius: 999px;
-    background: none; cursor: pointer;
-    font: inherit; font-size: 11px; font-weight: 600; letter-spacing: .16em;
-    text-transform: uppercase; color: var(--fg-3);
-    transition: all .18s ease;
-  }
-  .reset:hover { border-color: var(--fg-3); color: var(--fg); }
-  .reset.arm { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-  .note { margin-top: 16px; font-size: 10.5px; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-4); min-height: 14px; }
+  .log{margin-top:4px}
+  .log-item{display:flex;gap:14px;padding:11px 0;font-size:13px;font-weight:300;line-height:1.45;color:var(--fg-2);border-top:1px solid var(--line-2)}
+  .log-item:first-child{border-top:0}
+  .log-item time{flex:0 0 auto;font-size:11px;letter-spacing:.05em;color:var(--fg-4);white-space:nowrap;padding-top:1px}
 
   /* ---------- sheet ---------- */
-  .scrim {
-    position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.62);
-    opacity: 0; pointer-events: none; transition: opacity .3s ease;
+  .scrim{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.64);opacity:0;pointer-events:none;transition:opacity .3s ease}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:50;max-width:580px;margin:0 auto;
+    background:var(--raised);border-top:1px solid var(--line);border-radius:18px 18px 0 0;
+    padding:12px 22px calc(26px + env(safe-area-inset-bottom));
+    transform:translateY(102%);transition:transform .42s cubic-bezier(.32,.72,0,1);
+    max-height:92vh;overflow-y:auto;
   }
-  .scrim.open { opacity: 1; pointer-events: auto; }
+  .sheet.open{transform:translateY(0)}
+  .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 22px}
+  .sheet h3{margin:0 0 8px;font-size:23px;font-weight:600;letter-spacing:-.01em}
+  .sheet .sub{margin:0 0 26px;font-size:14px;font-weight:300;line-height:1.55;color:var(--fg-3)}
 
-  .sheet {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
-    max-width: 580px; margin: 0 auto;
-    background: var(--raised); border-top: 1px solid var(--line);
-    border-radius: 18px 18px 0 0;
-    padding: 12px 24px calc(28px + env(safe-area-inset-bottom));
-    transform: translateY(102%);
-    transition: transform .42s cubic-bezier(.32,.72,0,1);
-    max-height: 90vh; overflow-y: auto;
+  .field{margin-bottom:20px}
+  .field label{display:block;margin-bottom:9px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-3)}
+  .field input,.field textarea,.field select{
+    width:100%;padding:11px 0;border:0;border-bottom:1px solid var(--line);background:none;border-radius:0;
+    font:inherit;font-size:16.5px;font-weight:400;color:var(--fg);-webkit-appearance:none;appearance:none;
   }
-  .sheet.open { transform: translateY(0); }
-  .grab { width: 36px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 24px; }
-  .sheet h3 { margin: 0 0 8px; font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
-  .sheet .sub { margin: 0 0 28px; font-size: 14.5px; font-weight: 300; line-height: 1.55; color: var(--fg-3); }
+  .field textarea{min-height:58px;resize:vertical;line-height:1.5}
+  .field select{padding-right:26px;background-image:linear-gradient(45deg,transparent 50%,var(--fg-3) 50%),linear-gradient(135deg,var(--fg-3) 50%,transparent 50%);background-position:calc(100% - 11px) 21px,calc(100% - 6px) 21px;background-size:5px 5px;background-repeat:no-repeat}
+  .field input:focus,.field textarea:focus,.field select:focus{outline:0;border-bottom-color:var(--accent)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--fg-4)}
+  .field input[type=date],.field input[type=time]{color-scheme:dark}
+  .two{display:flex;gap:16px}
+  .two>*{flex:1;min-width:0}
 
-  .field { margin-bottom: 22px; }
-  .field label {
-    display: block; margin-bottom: 9px; font-size: 11px; font-weight: 600;
-    letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3);
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:none;cursor:pointer;
+    font:inherit;font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--fg-3);transition:all .16s ease;
   }
-  .field input, .field textarea, .field select {
-    width: 100%; padding: 11px 0; border: 0; border-bottom: 1px solid var(--line);
-    background: none; border-radius: 0;
-    font: inherit; font-size: 16.5px; font-weight: 400; color: var(--fg);
-    -webkit-appearance: none; appearance: none;
-  }
-  .field textarea { min-height: 60px; resize: vertical; line-height: 1.5; }
-  .field select {
-    padding-right: 26px;
-    background-image: linear-gradient(45deg, transparent 50%, var(--fg-3) 50%), linear-gradient(135deg, var(--fg-3) 50%, transparent 50%);
-    background-position: calc(100% - 11px) 21px, calc(100% - 6px) 21px;
-    background-size: 5px 5px; background-repeat: no-repeat;
-  }
-  .field input:focus, .field textarea:focus, .field select:focus { outline: 0; border-bottom-color: var(--accent); }
-  .field input::placeholder, .field textarea::placeholder { color: var(--fg-4); }
+  .chip.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+  .hint{margin:10px 0 0;font-size:12.5px;font-weight:300;line-height:1.55;color:var(--fg-4)}
+  .hint b{font-weight:600;color:var(--fg-3)}
+  .hint ol{margin:8px 0 0;padding-left:18px}
+  .hint li{margin-bottom:4px}
+  .idbox{display:flex;align-items:center;gap:10px;margin-top:6px;padding:11px 13px;border:1px solid var(--line);border-radius:6px}
+  .idbox code{flex:1;min-width:0;font-size:12.5px;color:var(--fg-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .idbox button{flex:0 0 auto;padding:5px 11px;border:0;border-radius:999px;cursor:pointer;background:var(--accent);color:var(--bg);font:inherit;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 
-  .acts { display: flex; gap: 11px; margin-top: 32px; }
-  .acts button {
-    flex: 1; padding: 16px; border-radius: 999px; cursor: pointer;
-    font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
-    transition: transform .12s ease;
-  }
-  .acts button:active { transform: scale(.97); }
-  .no  { border: 1px solid var(--line); background: none; color: var(--fg-2); }
-  .yes { border: 0; background: var(--accent); color: var(--bg); }
+  .acts{display:flex;gap:11px;margin-top:28px}
+  .acts button{flex:1;padding:16px;border-radius:999px;cursor:pointer;font:inherit;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;transition:transform .12s ease}
+  .acts button:active{transform:scale(.97)}
+  .no{border:1px solid var(--line);background:none;color:var(--fg-2)}
+  .yes{border:0;background:var(--accent);color:var(--bg)}
+  .danger{margin-top:12px;width:100%;padding:14px;border:1px solid var(--line);border-radius:999px;background:none;cursor:pointer;font:inherit;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--warn)}
+  .danger.arm{background:var(--warn);border-color:var(--warn);color:#fff}
 
-  /* ---------- sync ---------- */
-  .sync { margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line-2); }
-  .sync-row { display: flex; align-items: center; gap: 12px; }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--fg-4); flex: 0 0 auto; transition: background .25s ease; }
-  .sync-dot.on   { background: var(--accent); }
-  .sync-dot.busy { background: var(--fg-2); }
-  .sync-dot.err  { background: #C0392B; }
-  .sync-txt { font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3); }
-  .sync-btn {
-    margin-left: auto; padding: 7px 15px; border: 1px solid var(--line); border-radius: 999px;
-    background: none; cursor: pointer;
-    font: inherit; font-size: 10.5px; font-weight: 600; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--fg-3); transition: all .18s ease;
-  }
-  .sync-btn:hover { border-color: var(--accent-2); color: var(--accent); }
-
-  .hint { margin: 0 0 18px; font-size: 13px; font-weight: 300; line-height: 1.6; color: var(--fg-3); }
-  .hint b { font-weight: 600; color: var(--fg-2); }
-  .hint ol { margin: 10px 0 0; padding-left: 18px; }
-  .hint li { margin-bottom: 5px; }
-  .idbox {
-    display: flex; align-items: center; gap: 10px; margin-top: 6px;
-    padding: 11px 13px; border: 1px solid var(--line); border-radius: 6px;
-  }
-  .idbox code { flex: 1; min-width: 0; font-size: 12.5px; color: var(--fg-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .idbox button {
-    flex: 0 0 auto; padding: 5px 11px; border: 0; border-radius: 999px; cursor: pointer;
-    background: var(--accent); color: var(--bg);
-    font: inherit; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-  }
-
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
-
   <header>
-    <span class="eyebrow">Data engineering · Certification · Projects</span>
-    <h1>Execution Order</h1>
-    <p>Nine things, two at a time. Each module opens only when the one before it closes.</p>
+    <div class="topbar">
+      <span class="eyebrow" id="hEyebrow">Tracker</span>
+      <div class="tools">
+        <button class="tool" id="btnNotif" aria-label="Reminders" title="Reminders"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge" id="bNotif"></span></button>
+        <button class="tool" id="btnSync" aria-label="Sync" title="Sync"><svg viewBox="0 0 24 24"><path d="M21 3v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 21v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg><span class="badge" id="bSync"></span></button>
+        <button class="tool" id="btnLog" aria-label="History" title="History"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.4 2"/></svg></button>
+        <button class="tool" id="btnMenu" aria-label="Menu" title="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/><circle cx="9" cy="7" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="2" fill="currentColor" stroke="none"/></svg></button>
+      </div>
+    </div>
+    <h1 id="hTitle">Tracker</h1>
+    <p id="hIntro">Tabs for whatever you're keeping track of. Tap a task to edit it, hold it to move it.</p>
   </header>
 
-  <div class="status-bar">
-    <div class="sb-top">
-      <span class="sb-task" id="nowTask">Loading</span>
-      <span class="sb-count" id="nowCount"></span>
-    </div>
-    <div class="sb-meta" id="nowMeta"></div>
+  <div class="tabs-wrap">
+    <div class="tabs" id="tabs"></div>
     <div class="track"><span id="track"></span></div>
   </div>
 
-  <main id="rail"></main>
-  <button class="add-module" id="addModule">＋ &nbsp;Add module</button>
-
-  <section class="rules">
-    <span class="eyebrow">Operating rules</span>
-    <div class="rule"><b>01</b><p><strong>Two active items, maximum.</strong> One for work, one for you. That count climbing is the failure mode, not slow progress.</p></div>
-    <div class="rule"><b>02</b><p><strong>Slip the chain, don't compress it.</strong> If one module starts three weeks late, everything after moves three weeks. Squeezing a module to protect a date is how two things get done badly instead of one done well.</p></div>
-    <div class="rule"><b>03</b><p><strong>Finish before you start.</strong> Oweless is the test. It's nearly done and unshipped, and it gates the certification deliberately.</p></div>
-    <div class="rule"><b>04</b><p><strong>Anything you add lands in a module.</strong> New work has to say which phase it belongs to. That's the defence against the list quietly growing back.</p></div>
-  </section>
-
-  <section class="sync">
-    <div class="sync-row">
-      <span class="sync-dot" id="syncDot"></span>
-      <span class="sync-txt" id="syncTxt">Local only</span>
-      <button class="sync-btn" id="syncBtn">Set up sync</button>
-    </div>
-  </section>
-
-  <footer>
-    <button class="reset" id="reset">Reset</button>
-    <div class="note" id="note"></div>
-  </footer>
+  <main id="main"></main>
 
 </div>
+
+<button class="fab" id="fab" aria-label="Add task">＋</button>
 
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true">
   <div class="grab"></div>
-  <h3 id="sheetTitle">Add task</h3>
+  <h3 id="sheetTitle"></h3>
   <p class="sub" id="sheetSub"></p>
   <div id="sheetFields"></div>
   <div class="acts">
     <button class="no" id="sheetCancel">Cancel</button>
-    <button class="yes" id="sheetGo">Add</button>
+    <button class="yes" id="sheetGo">Save</button>
   </div>
+  <div id="sheetExtra"></div>
 </div>
 
 <script>
-const BASE = [
-  { id:"p0", name:"Runway", dates:"Aug 23–30",
-    gate:"Live now. Eight days, and only these two things exist.",
-    tasks:[
-      { id:"modelling", title:"Data modelling foundations", hrs:"~6 hrs",
-        dod:"You can state the grain of any table as one sentence, build a star schema from a flat source, explain SCD Type 1 vs Type 2, and spot a fan-out before it inflates a total. Drills 1–8 and 12 done." },
-      { id:"snowflake", title:"Snowflake fundamentals", hrs:"~5 hrs",
-        dod:"Trial account live. You can explain virtual warehouses and credit burn, micro-partitions and clustering, Streams and Tasks, Time Travel and zero-copy clone." }
-    ] },
-  { id:"p1", name:"Land the role", dates:"Aug 31 – Sep 27",
-    gate:"Opens when Runway closes. Weeks 1–4 of the new job, so assume most evenings are gone. Snowflake and modelling continue on the job, not as separate study.",
-    tasks:[
-      { id:"asyncio", title:"asyncio essentials", hrs:"~6 hrs",
-        dod:"Guide sections 1.1–1.9 read and typed out. Drills 1–5, 8 and 12 done. You can explain why a for-loop with await inside runs sequentially." },
-      { id:"pytest", title:"pytest for pipelines", hrs:"~5 hrs",
-        dod:"Fixtures, parametrize, monkeypatch, pytest-asyncio. Tests written for one real model at work: grain uniqueness, dimension key uniqueness, no orphan keys, a null case." },
-      { id:"jsts", title:"JavaScript / TypeScript", retired:true, hrs:"Retired",
-        dod:"This was for the role you're leaving. It returns in Ship Oweless as applied work, since that's a React app — better practice than drills anyway." }
-    ] },
-  { id:"p2", name:"Ship Oweless", dates:"Sep 28 – Oct 18",
-    gate:"Opens when pytest closes and work feels routine. Three weeks, but really one focused weekend plus slack for what breaks.",
-    tasks:[
-      { id:"deploy", title:"Deploy Oweless to a real URL", hrs:"~10 hrs",
-        dod:"Hosted, custom domain, environment variables handled properly, and one other person has used it to split a real bill." },
-      { id:"owpolish", title:"Fix only what blocks use", hrs:"~4 hrs",
-        dod:"Resist new features. A bug that stops someone splitting an expense gets fixed; everything else goes on a list." }
-    ] },
-  { id:"p3", name:"Network+", dates:"Oct 19 – Dec 13",
-    gate:"Opens when Oweless is live. Eight weeks at 6–8 hrs a week, the honest number for N10-009.",
-    tasks:[
-      { id:"netstudy", title:"Work the N10-009 objectives", hrs:"~50 hrs",
-        dod:"Full objectives list covered. OSI layers, subnetting by hand, routing and switching, DNS/DHCP, wireless, and the troubleshooting methodology." },
-      { id:"netmock", title:"Practice exams above 85%", hrs:"~8 hrs",
-        dod:"Three full-length mocks scored 85%+ on first attempt. Below that you're not ready, and rescheduling is cheaper than resitting." },
-      { id:"netexam", title:"Book and sit the exam", hrs:"90 min",
-        dod:"Book it the day you first clear 85%. An unbooked exam drifts forever." }
-    ] },
-  { id:"p4", name:"The pivot", dates:"Dec 14 – Mar 2027",
-    gate:"Opens when Network+ passes. Now the security rooms make sense, because they assume exactly what you just learned.",
-    tasks:[
-      { id:"thm", title:"TryHackMe — one full path", hrs:"~40 hrs",
-        dod:"Pre-Security or Cyber Defence finished end to end. One path completed beats four started." },
-      { id:"stockbot", title:"Stock bot", hrs:"Open",
-        dod:"The reward project. Deliberately last: it's the newest idea and the easiest to start, which is exactly why it kept displacing things that were nearly finished." }
-    ] }
-];
+/* ============================ state ============================ */
+const KEY = "tracker-v1";
+const EMPTY = () => ({
+  title: "Tracker",
+  eyebrow: "Tracker",
+  intro: "Tabs for whatever you're keeping track of. Tap a task to edit it, hold it to move it.",
+  tabs: [], tasks: [], log: [], fired: {}, activeTab: "", updatedAt: 0
+});
+let S = EMPTY();
+let reorderId = null;
 
-const KEY = "roadmap-v4";
-let S = { done:{}, custom:[], modules:[], deleted:{}, open:{}, updatedAt:0 };
+const norm = o => Object.assign(EMPTY(), o || {});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-/* ---- local cache: Claude storage when present, else localStorage, else memory ---- */
+/* ============================ storage ============================ */
 const mem = {};
 const ls = {
-  get(k){ try { return localStorage.getItem(k); } catch(e){ return mem[k] ?? null; } },
-  set(k,v){ try { localStorage.setItem(k,v); } catch(e){ mem[k] = v; } },
-  del(k){ try { localStorage.removeItem(k); } catch(e){ delete mem[k]; } }
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k] ?? null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){ delete mem[k]; } }
 };
 const store = {
-  async get(k){ if (window.storage){ try { const r = await window.storage.get(k); return r ? r.value : null; } catch(e){ return null; } } return ls.get(k); },
-  async set(k,v){ if (window.storage){ try { await window.storage.set(k,v); } catch(e){} return; } ls.set(k,v); },
-  async del(k){ if (window.storage){ try { await window.storage.delete(k); } catch(e){} return; } ls.del(k); }
+  async get(k){ if(window.storage){ try{ const r = await window.storage.get(k); return r ? r.value : null; }catch(e){ return null; } } return ls.get(k); },
+  async set(k,v){ if(window.storage){ try{ await window.storage.set(k,v); }catch(e){} return; } ls.set(k,v); }
 };
 
-/* ---- cross-device sync via a secret GitHub Gist ---- */
-const FILE = "roadmap.json";
+/* ============================ gist sync ============================ */
+const FILE = "tracker.json";
 const SYNC = {
   get token(){ return ls.get("gh_token") || ""; },
   set token(v){ v ? ls.set("gh_token", v) : ls.del("gh_token"); },
   get gist(){ return ls.get("gh_gist") || ""; },
   set gist(v){ v ? ls.set("gh_gist", v) : ls.del("gh_gist"); },
   get on(){ return !!(this.token && this.gist); },
-  head(){ return {
-    "Authorization": "Bearer " + this.token,
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-    "Content-Type": "application/json"
-  }; },
+  head(){ return { "Authorization":"Bearer "+this.token, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28", "Content-Type":"application/json" }; },
   async create(state){
-    const r = await fetch("https://api.github.com/gists", {
-      method: "POST", headers: this.head(),
-      body: JSON.stringify({
-        description: "Execution Order — tracker state",
-        public: false,
-        files: { [FILE]: { content: JSON.stringify(state, null, 2) } }
-      })
-    });
-    if (!r.ok) throw new Error("create failed (" + r.status + ")");
-    const j = await r.json();
-    return j.id;
+    const r = await fetch("https://api.github.com/gists", { method:"POST", headers:this.head(),
+      body: JSON.stringify({ description:"Tracker state", public:false, files:{ [FILE]:{ content: JSON.stringify(state,null,2) } } }) });
+    if(!r.ok) throw new Error("create failed ("+r.status+")");
+    return (await r.json()).id;
   },
   async pull(){
-    const r = await fetch("https://api.github.com/gists/" + this.gist + "?t=" + Date.now(), {
-      headers: this.head(), cache: "no-store"
-    });
-    if (!r.ok) throw new Error("pull failed (" + r.status + ")");
-    const j = await r.json();
-    const f = j.files && j.files[FILE];
-    if (!f) return null;
+    const r = await fetch("https://api.github.com/gists/"+this.gist+"?t="+Date.now(), { headers:this.head(), cache:"no-store" });
+    if(!r.ok) throw new Error("pull failed ("+r.status+")");
+    const j = await r.json(); const f = j.files && j.files[FILE];
+    if(!f) return null;
     let text = f.content;
-    if (f.truncated && f.raw_url) text = await (await fetch(f.raw_url, { cache: "no-store" })).text();
-    try { return JSON.parse(text); } catch(e){ return null; }
+    if(f.truncated && f.raw_url) text = await (await fetch(f.raw_url,{cache:"no-store"})).text();
+    try{ return JSON.parse(text); }catch(e){ return null; }
   },
   async push(state){
-    const r = await fetch("https://api.github.com/gists/" + this.gist, {
-      method: "PATCH", headers: this.head(),
-      body: JSON.stringify({ files: { [FILE]: { content: JSON.stringify(state, null, 2) } } })
-    });
-    if (!r.ok) throw new Error("push failed (" + r.status + ")");
-    return true;
+    const r = await fetch("https://api.github.com/gists/"+this.gist, { method:"PATCH", headers:this.head(),
+      body: JSON.stringify({ files:{ [FILE]:{ content: JSON.stringify(state,null,2) } } }) });
+    if(!r.ok) throw new Error("push failed ("+r.status+")");
   }
 };
-
-const EMPTY = () => ({ done:{}, custom:[], modules:[], deleted:{}, open:{}, updatedAt:0 });
-const normalize = o => Object.assign(EMPTY(), o || {});
-
-const dotEl = () => document.getElementById("syncDot");
-const txtEl = () => document.getElementById("syncTxt");
-let lastSynced = 0;
-
-function syncState(kind, msg){
-  const d = dotEl(), t = txtEl();
-  if (!d || !t) return;
-  d.className = "sync-dot" + (kind ? " " + kind : "");
-  t.textContent = msg;
+let lastSynced = 0, pushTimer = null;
+let syncMsg = "Local only";
+function syncSet(kind,msg){
+  syncMsg = msg;
+  const b = document.getElementById("bSync"), tool = document.getElementById("btnSync");
+  if(b) b.className = "badge" + (kind ? " " + kind : "");
+  if(tool) tool.classList.toggle("live", kind === "on");
+  const row = document.getElementById("mSyncStatus"); if(row) row.textContent = msg;
 }
 function syncIdle(){
-  if (!SYNC.on) { syncState("", "Local only"); return; }
-  if (!lastSynced) { syncState("on", "Synced"); return; }
-  const s = Math.round((Date.now() - lastSynced) / 1000);
-  syncState("on", s < 60 ? "Synced just now" : "Synced " + Math.round(s/60) + "m ago");
+  if(!SYNC.on){ syncSet("","Local only"); return; }
+  const s = lastSynced ? Math.round((Date.now()-lastSynced)/1000) : 0;
+  syncSet("on", !lastSynced ? "Synced" : (s<60 ? "Synced just now" : "Synced "+Math.round(s/60)+"m ago"));
 }
-
-let pushTimer = null;
-function schedulePush(){
-  if (!SYNC.on) return;
-  clearTimeout(pushTimer);
-  pushTimer = setTimeout(doPush, 1200);
-}
-async function doPush(){
-  if (!SYNC.on) return;
-  syncState("busy", "Saving to GitHub");
-  try { await SYNC.push(S); lastSynced = Date.now(); syncIdle(); }
-  catch(e){ syncState("err", String(e.message || e)); }
-}
+function schedulePush(){ if(!SYNC.on) return; clearTimeout(pushTimer); pushTimer=setTimeout(doPush,1200); }
+async function doPush(){ if(!SYNC.on) return; syncSet("busy","Saving to GitHub");
+  try{ await SYNC.push(S); lastSynced=Date.now(); syncIdle(); }catch(e){ syncSet("err", e.message||String(e)); } }
 async function doPull(quiet){
-  if (!SYNC.on) return;
-  if (!quiet) syncState("busy", "Checking GitHub");
-  try {
-    const remote = await SYNC.pull();
-    if (remote && (remote.updatedAt || 0) > (S.updatedAt || 0)) {
-      S = normalize(remote);
-      render();
-      await store.set(KEY, JSON.stringify(S));
-      lastSynced = Date.now(); syncState("on", "Updated from GitHub");
-      setTimeout(syncIdle, 2500);
-      return;
-    }
-    if (remote && (S.updatedAt || 0) > (remote.updatedAt || 0)) { await doPush(); return; }
-    lastSynced = Date.now(); syncIdle();
-  } catch(e){ syncState("err", String(e.message || e)); }
+  if(!SYNC.on) return;
+  if(!quiet) syncSet("busy","Checking GitHub");
+  try{
+    const r = await SYNC.pull();
+    if(r && (r.updatedAt||0) > (S.updatedAt||0)){ S = norm(r); await store.set(KEY, JSON.stringify(S)); render(); lastSynced=Date.now(); syncSet("on","Updated from GitHub"); setTimeout(syncIdle,2500); return; }
+    if(r && (S.updatedAt||0) > (r.updatedAt||0)){ await doPush(); return; }
+    lastSynced=Date.now(); syncIdle();
+  }catch(e){ syncSet("err", e.message||String(e)); }
 }
 
-const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const uid = () => "u"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const pad = n => String(n).padStart(2,"0");
-
-function plan(){
-  const mods = [
-    ...BASE.map(m => ({...m, mine:false, tasks:m.tasks.slice()})),
-    ...S.modules.map(m => ({...m, mine:true, tasks:[]}))
-  ].filter(m => !S.deleted[m.id]);
-  S.custom.forEach(c => { const m = mods.find(x => x.id === c.moduleId); if (m) m.tasks.push({...c, mine:true}); });
-  mods.forEach(m => { m.tasks = m.tasks.filter(t => !S.deleted[t.id]); });
-  return mods;
+/* ============================ log + save ============================ */
+function logIt(msg){
+  S.log.unshift({ ts: Date.now(), msg });
+  if(S.log.length > 400) S.log.length = 400;
 }
-const counts = t => !t.retired;
-const isDone = m => m.tasks.filter(counts).every(t => S.done[t.id]);
-function liveIndex(mods){ let i=0; while (i<mods.length && isDone(mods[i])) i++; return i; }
-
-const railEl = document.getElementById("rail");
-const noteEl = document.getElementById("note");
-
-function render(){
-  const mods = plan();
-  const live = liveIndex(mods);
-  railEl.innerHTML = "";
-
-  mods.forEach((m,i) => {
-    const shut = i > live;
-    const cls = i < live ? "is-closed" : (i === live ? "is-live" : "is-shut");
-    const state = shut ? "Shut" : (i < live ? "Closed" : "Live");
-
-    const sec = document.createElement("section");
-    sec.className = "module " + cls;
-    sec.innerHTML =
-      '<div class="mod-top">' +
-        '<span class="eyebrow'+(i===live?"":" mute")+'">'+pad(i)+' · '+state+'</span>' +
-        (m.mine ? '<button class="mod-kill" data-mod="'+esc(m.id)+'">Remove</button>' : '') +
-        '<span class="mod-dates">'+esc(m.dates||"")+'</span>' +
-      '</div>' +
-      '<h2 class="mod-name">'+esc(m.name)+'</h2>' +
-      (m.gate ? '<p class="mod-gate">'+esc(m.gate)+'</p>' : '');
-
-    m.tasks.forEach(t => {
-      const on = !!S.done[t.id];
-      const row = document.createElement("div");
-      row.className = "task" + (on?" checked":"") + (t.retired?" retired":"") + (t.mine?" mine":"") + (S.open[t.id]?" open":"");
-      row.innerHTML =
-        '<div class="row">' +
-          '<button class="tick"'+((shut||t.retired)?" disabled":"")+' aria-label="Toggle"><i>✓</i></button>' +
-          '<button class="body">' +
-            '<span class="t-title">'+esc(t.title)+'</span>' +
-            (t.hrs ? '<span class="t-meta">'+esc(t.hrs)+'</span>' : '') +
-          '</button>' +
-          '<button class="kill" data-task="'+esc(t.id)+'" aria-label="Delete">✕</button>' +
-        '</div>' +
-        (t.dod ? '<div class="detail">'+esc(t.dod)+'</div>' : '');
-
-      const tick = row.querySelector(".tick");
-      if (!tick.disabled) tick.addEventListener("click", () => toggle(t.id));
-      row.querySelector(".body").addEventListener("click", () => { S.open[t.id] = !S.open[t.id]; render(); });
-      sec.appendChild(row);
-    });
-
-    const add = document.createElement("button");
-    add.className = "add";
-    add.innerHTML = '<b>＋</b> Add task';
-    add.addEventListener("click", () => openTaskSheet(m.id));
-    sec.appendChild(add);
-
-    railEl.appendChild(sec);
-  });
-
-  const all = mods.flatMap(m => m.tasks).filter(counts);
-  const closed = all.filter(t => S.done[t.id]).length;
-  const nowTask = document.getElementById("nowTask");
-  const nowMeta = document.getElementById("nowMeta");
-
-  if (!mods.length) { nowTask.textContent = "No modules"; nowMeta.textContent = "Add one to begin"; }
-  else if (live >= mods.length) { nowTask.textContent = "All closed"; nowMeta.textContent = "Write the next plan"; }
-  else {
-    const m = mods[live];
-    const next = m.tasks.filter(counts).find(t => !S.done[t.id]);
-    nowTask.textContent = next ? next.title : m.name;
-    const active = m.tasks.filter(counts).filter(t => !S.done[t.id]).length;
-    nowMeta.textContent = m.name + " · " + active + " active";
-  }
-
-  document.getElementById("nowCount").textContent = closed + " / " + all.length;
-  document.getElementById("track").style.width = (all.length ? (closed/all.length*100) : 0) + "%";
-}
-
 async function save(){
   S.updatedAt = Date.now();
-  try { await store.set(KEY, JSON.stringify(S)); noteEl.textContent = "Saved"; }
-  catch(e){ noteEl.textContent = "Session only"; }
+  try{ await store.set(KEY, JSON.stringify(S)); }catch(e){}
   schedulePush();
 }
-function toggle(id){ S.done[id] = !S.done[id]; render(); save(); }
+function commit(msg){ if(msg) logIt(msg); render(); save(); }
+
+/* ============================ helpers ============================ */
+const REMINDERS = [
+  { v:0,     l:"At time" },
+  { v:10,    l:"10 min" },
+  { v:30,    l:"30 min" },
+  { v:60,    l:"1 hour" },
+  { v:180,   l:"3 hours" },
+  { v:1440,  l:"1 day" },
+  { v:2880,  l:"2 days" },
+  { v:10080, l:"1 week" }
+];
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+function dueDate(t){
+  if(!t.date) return null;
+  return new Date(t.date + "T" + (t.time || "09:00") + ":00");
+}
+function fmtDue(t){
+  const d = dueDate(t); if(!d) return "";
+  const today = new Date(); today.setHours(0,0,0,0);
+  const day = new Date(t.date + "T00:00:00");
+  const diff = Math.round((day - today) / 86400000);
+  const when = diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : diff === -1 ? "Yesterday"
+    : (diff > 1 && diff < 7) ? DAYS[day.getDay()]
+    : day.toLocaleDateString(undefined,{ day:"numeric", month:"short", year: day.getFullYear()!==today.getFullYear() ? "numeric" : undefined });
+  return when + (t.time ? " · " + t.time : "");
+}
+function dueClass(t){
+  const d = dueDate(t); if(!d) return "";
+  const ms = d - Date.now();
+  if(ms < 0) return "late";
+  if(ms < 86400000) return "soon";
+  return "";
+}
+function expired(t){ return t.expires && new Date(t.expires + "T23:59:59") < new Date(); }
+const tabTasks = id => S.tasks.filter(t => t.tabId === id).sort((a,b) => (a.order||0) - (b.order||0));
+const activeTab = () => S.tabs.find(x => x.id === S.activeTab) || S.tabs[0];
+
+/* ============================ render ============================ */
+const mainEl = document.getElementById("main");
+
+function render(){
+  document.getElementById("hTitle").textContent = S.title || "Tracker";
+  document.getElementById("hEyebrow").textContent = S.eyebrow || "Tracker";
+  document.getElementById("hIntro").textContent = S.intro || "";
+
+  if(S.tabs.length && !S.tabs.some(t => t.id === S.activeTab)) S.activeTab = S.tabs[0].id;
+
+  // tabs
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = "";
+  S.tabs.forEach(tab => {
+    const list = tabTasks(tab.id);
+    const left = list.filter(t => !t.done).length;
+    const b = document.createElement("button");
+    b.className = "tab" + (tab.id === S.activeTab ? " on" : "");
+    b.innerHTML = esc(tab.name) + (left ? '<span class="n">' + left + '</span>' : '');
+    b.addEventListener("click", () => {
+      if(tab.id === S.activeTab) return openTabSheet(tab);
+      S.activeTab = tab.id; reorderId = null; render(); save();
+    });
+    tabsEl.appendChild(b);
+  });
+  const addTab = document.createElement("button");
+  addTab.className = "tab-add"; addTab.textContent = "＋"; addTab.setAttribute("aria-label","Add tab");
+  addTab.addEventListener("click", () => openTabSheet(null));
+  tabsEl.appendChild(addTab);
+
+  // body
+  mainEl.innerHTML = "";
+  const tab = activeTab();
+  if(!tab){
+    mainEl.innerHTML = '<p class="empty">No tabs yet. Tap ＋ above to make your first one.</p>';
+    document.getElementById("track").style.width = "0%";
+    renderLog(); return;
+  }
+
+  const list = tabTasks(tab.id);
+  const done = list.filter(t => t.done).length;
+
+  const head = document.createElement("div");
+  head.className = "tabhead";
+  head.innerHTML = '<h2>' + esc(tab.name) + '</h2><span class="meta">' + done + ' / ' + list.length + '</span>';
+  mainEl.appendChild(head);
+  if(tab.note){ const p = document.createElement("p"); p.className = "tabnote"; p.textContent = tab.note; mainEl.appendChild(p); }
+
+  if(!list.length){
+    const e = document.createElement("p"); e.className = "empty"; e.textContent = "Nothing here yet.";
+    mainEl.appendChild(e);
+  }
+
+  list.forEach((t, i) => {
+    const el = document.createElement("div");
+    el.className = "task" + (t.done ? " done" : "") + (reorderId === t.id ? " drag" : "");
+
+    const bits = [];
+    if(t.date) bits.push('<span class="due ' + dueClass(t) + '">' + esc(fmtDue(t)) + '</span>');
+    if(t.reminders && t.reminders.length) bits.push('<span>' + t.reminders.length + ' reminder' + (t.reminders.length>1?"s":"") + '</span>');
+    if(t.expires) bits.push('<span class="exp">' + (expired(t) ? "Expired" : "Expires " + esc(t.expires)) + '</span>');
+    if(t.notes) bits.push('<span>Note</span>');
+
+    el.innerHTML =
+      '<div class="row">' +
+        '<button class="tick" aria-label="Toggle"><i>✓</i></button>' +
+        '<button class="body"><span class="t-title">' + esc(t.title) + '</span>' +
+          (bits.length ? '<span class="t-sub">' + bits.join("") + '</span>' : '') +
+        '</button>' +
+        '<button class="kill" data-task="' + t.id + '" aria-label="Delete">✕</button>' +
+      '</div>' +
+      (reorderId === t.id
+        ? '<div class="movers">' +
+            '<button data-up="' + t.id + '"' + (i === 0 ? " disabled" : "") + '>↑ Up</button>' +
+            '<button data-down="' + t.id + '"' + (i === list.length-1 ? " disabled" : "") + '>↓ Down</button>' +
+            '<button class="go" data-stop="1">Done</button>' +
+          '</div>'
+        : '');
+
+    el.querySelector(".tick").addEventListener("click", () => toggle(t.id));
+    const body = el.querySelector(".body");
+    body.addEventListener("click", () => { if(reorderId !== t.id) openTaskSheet(t); });
+    holdToReorder(body, t.id);
+    mainEl.appendChild(el);
+  });
+
+  const add = document.createElement("button");
+  add.className = "add"; add.innerHTML = '<b>＋</b> Add task';
+  add.addEventListener("click", () => openTaskSheet(null));
+  mainEl.appendChild(add);
+
+  document.getElementById("track").style.width = (list.length ? done/list.length*100 : 0) + "%";
+  renderLog();
+}
+
+function logHTML(){
+  return S.log.slice(0,120).map(e =>
+    '<div class="log-item"><time>' + new Date(e.ts).toLocaleString(undefined,{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}) + '</time><span>' + esc(e.msg) + '</span></div>'
+  ).join("") || '<div class="log-item"><span>Nothing logged yet.</span></div>';
+}
+function renderLog(){}
+
+/* ============================ actions ============================ */
+function toggle(id){
+  const t = S.tasks.find(x => x.id === id); if(!t) return;
+  t.done = !t.done; t.doneAt = t.done ? Date.now() : null; t.updatedAt = Date.now();
+  commit((t.done ? "Completed" : "Reopened") + ' "' + t.title + '"');
+}
+function move(id, dir){
+  const t = S.tasks.find(x => x.id === id); if(!t) return;
+  const list = tabTasks(t.tabId);
+  const i = list.findIndex(x => x.id === id);
+  const j = i + dir;
+  if(j < 0 || j >= list.length) return;
+  const a = list[i].order, b = list[j].order;
+  list[i].order = b; list[j].order = a;
+  list[i].updatedAt = Date.now();
+  commit('Moved "' + t.title + '" ' + (dir < 0 ? "up" : "down"));
+}
+function holdToReorder(el, id){
+  let timer = null;
+  const start = () => { timer = setTimeout(() => { reorderId = id; if(navigator.vibrate) navigator.vibrate(12); render(); }, 480); };
+  const stop = () => { clearTimeout(timer); };
+  el.addEventListener("touchstart", start, {passive:true});
+  el.addEventListener("touchend", stop);
+  el.addEventListener("touchmove", stop, {passive:true});
+  el.addEventListener("mousedown", start);
+  el.addEventListener("mouseup", stop);
+  el.addEventListener("mouseleave", stop);
+}
 
 function armed(btn, label, go){
-  if (btn.classList.contains("arm")) { go(); return; }
-  document.querySelectorAll(".arm").forEach(b => { b.classList.remove("arm"); if (b.dataset.was) b.textContent = b.dataset.was; });
-  btn.dataset.was = btn.textContent;
-  btn.textContent = label;
-  btn.classList.add("arm");
-  setTimeout(() => { if (btn.classList.contains("arm")) { btn.classList.remove("arm"); btn.textContent = btn.dataset.was; } }, 3000);
+  if(btn.classList.contains("arm")){ go(); return; }
+  document.querySelectorAll(".arm").forEach(b => { b.classList.remove("arm"); if(b.dataset.was) b.textContent = b.dataset.was; });
+  btn.dataset.was = btn.textContent; btn.textContent = label; btn.classList.add("arm");
+  setTimeout(() => { if(btn.classList.contains("arm")){ btn.classList.remove("arm"); btn.textContent = btn.dataset.was; } }, 3000);
 }
 
 document.addEventListener("click", e => {
   const k = e.target.closest(".kill");
-  if (k) { armed(k, "Delete", () => { S.deleted[k.dataset.task] = true; render(); save(); }); return; }
-  const mk = e.target.closest(".mod-kill");
-  if (mk) { armed(mk, "Delete", () => { S.deleted[mk.dataset.mod] = true; render(); save(); }); }
+  if(k){ const t = S.tasks.find(x => x.id === k.dataset.task);
+    armed(k, "Delete", () => { S.tasks = S.tasks.filter(x => x.id !== k.dataset.task); commit('Deleted "' + (t?t.title:"task") + '"'); });
+    return; }
+  const up = e.target.closest("[data-up]");   if(up){ move(up.dataset.up, -1); return; }
+  const dn = e.target.closest("[data-down]"); if(dn){ move(dn.dataset.down, 1); return; }
+  if(e.target.closest("[data-stop]")){ reorderId = null; render(); }
 });
 
-const scrim = document.getElementById("scrim");
-const sheet = document.getElementById("sheet");
-const sheetFields = document.getElementById("sheetFields");
+/* ============================ sheet ============================ */
+const scrim = document.getElementById("scrim"), sheet = document.getElementById("sheet");
+const sFields = document.getElementById("sheetFields"), sExtra = document.getElementById("sheetExtra");
 let onSubmit = null;
 
-function openSheet(title, sub, html, submit){
+function openSheet(title, sub, html, submit, extraHtml){
   document.getElementById("sheetTitle").textContent = title;
-  document.getElementById("sheetSub").textContent = sub;
-  sheetFields.innerHTML = html;
-  onSubmit = submit;
+  const subEl = document.getElementById("sheetSub");
+  subEl.textContent = sub || ""; subEl.style.display = sub ? "" : "none";
+  sFields.innerHTML = html;
+  sExtra.innerHTML = extraHtml || "";
+  onSubmit = submit || null;
+  document.getElementById("sheetGo").style.display = submit ? "" : "none";
+  document.getElementById("sheetCancel").textContent = submit ? "Cancel" : "Close";
   scrim.classList.add("open"); sheet.classList.add("open");
-  setTimeout(() => { const f = sheetFields.querySelector("input,textarea,select"); if (f) f.focus(); }, 400);
+  sheet.scrollTop = 0;
 }
 function closeSheet(){ scrim.classList.remove("open"); sheet.classList.remove("open"); onSubmit = null; }
 scrim.addEventListener("click", closeSheet);
 document.getElementById("sheetCancel").addEventListener("click", closeSheet);
-document.getElementById("sheetGo").addEventListener("click", () => { if (onSubmit) onSubmit(); });
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+document.getElementById("sheetGo").addEventListener("click", () => { if(onSubmit) onSubmit(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeSheet(); });
 
-function openTaskSheet(moduleId){
-  const opts = plan().map((m,i) =>
-    '<option value="'+esc(m.id)+'"'+(m.id===moduleId?" selected":"")+'>'+pad(i)+' · '+esc(m.name)+'</option>').join("");
-  openSheet("Add task", "It has to belong to a module. That's what keeps the list honest.",
-    '<div class="field"><label for="fTitle">Task</label><input id="fTitle" type="text" placeholder="Subnetting practice" autocomplete="off" /></div>' +
-    '<div class="field"><label for="fHrs">Estimate</label><input id="fHrs" type="text" placeholder="~4 hrs" autocomplete="off" /></div>' +
-    '<div class="field"><label for="fDod">What done looks like</label><textarea id="fDod" placeholder="Twenty /26 splits by hand, under a minute each."></textarea></div>' +
-    '<div class="field"><label for="fMod">Module</label><select id="fMod">'+opts+'</select></div>',
+sheet.addEventListener("click", e => {
+  const c = e.target.closest(".chip");
+  if(c && c.dataset.rem !== undefined){ c.classList.toggle("on"); }
+});
+
+/* ---------- tabs ---------- */
+function openTabSheet(tab){
+  const editing = !!tab;
+  openSheet(editing ? "Edit tab" : "New tab",
+    editing ? "Rename it, or take it away along with everything in it." : "A tab is just a group. Anything you like.",
+    '<div class="field"><label for="tName">Name</label><input id="tName" type="text" placeholder="Work" autocomplete="off" value="' + esc(editing ? tab.name : "") + '" /></div>' +
+    '<div class="field"><label for="tNote">Note</label><textarea id="tNote" placeholder="Optional line describing this tab.">' + esc(editing ? (tab.note||"") : "") + '</textarea></div>',
     () => {
-      const title = document.getElementById("fTitle").value.trim();
-      if (!title) { document.getElementById("fTitle").focus(); return; }
-      S.custom.push({ id:uid(), moduleId:document.getElementById("fMod").value, title,
-        dod:document.getElementById("fDod").value.trim(), hrs:document.getElementById("fHrs").value.trim() });
-      closeSheet(); render(); save();
-    });
+      const name = document.getElementById("tName").value.trim();
+      if(!name){ document.getElementById("tName").focus(); return; }
+      const note = document.getElementById("tNote").value.trim();
+      if(editing){ const old = tab.name; tab.name = name; tab.note = note; closeSheet(); commit(old === name ? 'Edited tab "' + name + '"' : 'Renamed tab "' + old + '" to "' + name + '"'); }
+      else { const id = uid(); S.tabs.push({ id, name, note, createdAt: Date.now() }); S.activeTab = id; closeSheet(); commit('Added tab "' + name + '"'); }
+    },
+    editing ? '<button class="danger" id="delTab">Delete tab and its tasks</button>' : ''
+  );
+  if(editing){
+    setTimeout(() => {
+      const d = document.getElementById("delTab");
+      if(d) d.addEventListener("click", () => armed(d, "Tap again to delete", () => {
+        const n = tabTasks(tab.id).length;
+        S.tasks = S.tasks.filter(t => t.tabId !== tab.id);
+        S.tabs = S.tabs.filter(t => t.id !== tab.id);
+        if(S.activeTab === tab.id) S.activeTab = S.tabs.length ? S.tabs[0].id : "";
+        closeSheet(); commit('Deleted tab "' + tab.name + '" and ' + n + ' task' + (n===1?"":"s"));
+      }));
+    }, 40);
+  }
 }
 
-document.getElementById("addModule").addEventListener("click", () => {
-  openSheet("Add module", "Modules run in order. This one goes last and opens when everything above it closes.",
-    '<div class="field"><label for="mName">Name</label><input id="mName" type="text" placeholder="AWS certification" autocomplete="off" /></div>' +
-    '<div class="field"><label for="mDates">Window</label><input id="mDates" type="text" placeholder="Apr – Jun 2027" autocomplete="off" /></div>' +
-    '<div class="field"><label for="mGate">Why it sits here</label><textarea id="mGate" placeholder="Opens once the security path is finished."></textarea></div>',
+/* ---------- tasks ---------- */
+function openTaskSheet(task){
+  if(!S.tabs.length){ openTabSheet(null); return; }
+  const editing = !!task;
+  const t = task || { title:"", notes:"", tabId: S.activeTab, date:"", time:"", expires:"", reminders:[] };
+
+  const tabOpts = S.tabs.map(x => '<option value="' + x.id + '"' + (x.id === t.tabId ? " selected" : "") + '>' + esc(x.name) + '</option>').join("");
+  const chips = REMINDERS.map(r =>
+    '<button type="button" class="chip' + ((t.reminders||[]).includes(r.v) ? " on" : "") + '" data-rem="' + r.v + '">' + r.l + '</button>').join("");
+
+  openSheet(editing ? "Edit task" : "New task", "",
+    '<div class="field"><label for="kTitle">Task</label><input id="kTitle" type="text" placeholder="What needs doing" autocomplete="off" value="' + esc(t.title) + '" /></div>' +
+    '<div class="field"><label for="kTab">Tab</label><select id="kTab">' + tabOpts + '</select></div>' +
+    '<div class="two">' +
+      '<div class="field"><label for="kDate">Date</label><input id="kDate" type="date" value="' + esc(t.date) + '" /></div>' +
+      '<div class="field"><label for="kTime">Time</label><input id="kTime" type="time" value="' + esc(t.time) + '" /></div>' +
+    '</div>' +
+    '<p class="hint" id="kDay"></p>' +
+    '<div class="field"><label>Reminders — pick as many as you want</label><div class="chips">' + chips + '</div>' +
+      '<p class="hint">Counted back from the date and time above.</p></div>' +
+    '<div class="field"><label for="kExp">Expires on</label><input id="kExp" type="date" value="' + esc(t.expires) + '" />' +
+      '<p class="hint">After this the task is marked expired. Leave blank if it never goes stale.</p></div>' +
+    '<div class="field"><label for="kNotes">Notes</label><textarea id="kNotes" placeholder="Anything worth remembering.">' + esc(t.notes || "") + '</textarea></div>',
     () => {
-      const name = document.getElementById("mName").value.trim();
-      if (!name) { document.getElementById("mName").focus(); return; }
-      S.modules.push({ id:uid(), name, dates:document.getElementById("mDates").value.trim(),
-        gate:document.getElementById("mGate").value.trim() });
-      closeSheet(); render(); save();
-    });
-});
-
-document.getElementById("reset").addEventListener("click", e => {
-  armed(e.currentTarget, "Erase all", async () => {
-    S = EMPTY();
-    S.updatedAt = Date.now();
-    render();
-    try { await store.set(KEY, JSON.stringify(S)); noteEl.textContent = "Reset"; }
-    catch(err){ noteEl.textContent = "Cleared"; }
-    schedulePush();
-  });
-});
-
-/* ---------- sync setup sheet ---------- */
-function openSyncSheet(){
-  const connected = SYNC.on;
-  const idBlock = connected
-    ? '<div class="field"><label>Store ID — paste this on your other devices</label>' +
-      '<div class="idbox"><code id="gistId">' + esc(SYNC.gist) + '</code>' +
-      '<button type="button" id="copyId">Copy</button></div></div>'
-    : '';
-
-  openSheet(
-    connected ? "Sync" : "Set up sync",
-    connected
-      ? "Your tracker is stored in a secret GitHub Gist. Paste the same token and store ID on any other device to keep them in step."
-      : "The tracker can keep itself in step across your laptop and phone by storing its state in a secret GitHub Gist.",
-    '<p class="hint"><b>One-time setup on GitHub.</b> Fastest route: open ' +
-      '<a href="https://github.com/settings/personal-access-tokens/new?name=Execution+Order+sync&amp;gists=write&amp;expires_in=366" target="_blank" rel="noopener" style="color:var(--accent)">this pre-filled link</a>' +
-      ' and press Generate token. Or by hand:' +
-      '<ol>' +
-        '<li>Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b></li>' +
-        '<li>Generate new token. Set an expiry you can live with.</li>' +
-        '<li>Resource owner must be <b>your own account</b>, not an organisation.</li>' +
-        '<li>Repository access: <b>Public repositories</b> is fine — this does not touch repos.</li>' +
-        '<li>Account permissions → <b>Gists</b> → <b>Write</b>. That is the only one.</li>' +
-        '<li>Generate, copy the token, paste it below.</li>' +
-      '</ol></p>' +
-    '<div class="field"><label for="fTok">GitHub token</label>' +
-      '<input id="fTok" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false" value="' + esc(SYNC.token) + '" /></div>' +
-    '<div class="field"><label for="fGist">Store ID — leave empty to create a new one</label>' +
-      '<input id="fGist" type="text" placeholder="creates a new secret gist" autocomplete="off" spellcheck="false" value="' + esc(SYNC.gist) + '" /></div>' +
-    idBlock +
-    '<p class="hint" id="syncMsg"></p>',
-    async () => {
-      const msg = document.getElementById("syncMsg");
-      const tok = document.getElementById("fTok").value.trim();
-      const gid = document.getElementById("fGist").value.trim();
-      if (!tok) { document.getElementById("fTok").focus(); return; }
-
-      SYNC.token = tok;
-      msg.textContent = "Connecting…";
-      try {
-        if (gid) {
-          SYNC.gist = gid;
-          const remote = await SYNC.pull();
-          if (remote && (remote.updatedAt || 0) > (S.updatedAt || 0)) {
-            S = normalize(remote);
-            await store.set(KEY, JSON.stringify(S));
-          } else {
-            await SYNC.push(S);
-          }
-        } else {
-          S.updatedAt = Date.now();
-          SYNC.gist = await SYNC.create(S);
-        }
-        lastSynced = Date.now();
-        closeSheet(); render(); syncIdle();
-        noteEl.textContent = "Sync on";
-      } catch(e) {
-        msg.textContent = "Failed: " + (e.message || e) + ". Check the token has the Gists permission set to Write.";
+      const title = document.getElementById("kTitle").value.trim();
+      if(!title){ document.getElementById("kTitle").focus(); return; }
+      const rems = [...sheet.querySelectorAll(".chip.on")].map(c => Number(c.dataset.rem)).sort((a,b) => a-b);
+      const data = {
+        title,
+        tabId: document.getElementById("kTab").value,
+        date: document.getElementById("kDate").value,
+        time: document.getElementById("kTime").value,
+        expires: document.getElementById("kExp").value,
+        notes: document.getElementById("kNotes").value.trim(),
+        reminders: rems,
+        updatedAt: Date.now()
+      };
+      if(editing){ Object.assign(task, data); closeSheet(); commit('Edited "' + title + '"'); }
+      else {
+        const maxOrder = Math.max(0, ...S.tasks.filter(x => x.tabId === data.tabId).map(x => x.order || 0));
+        S.tasks.push(Object.assign({ id: uid(), createdAt: Date.now(), done:false, doneAt:null, order: maxOrder + 1 }, data));
+        closeSheet(); commit('Added "' + title + '"');
       }
-    });
+    },
+    editing ? '<button class="danger" id="icsBtn" style="color:var(--fg-2)">Add to calendar (.ics)</button>' : ''
+  );
 
   setTimeout(() => {
-    const c = document.getElementById("copyId");
-    if (c) c.addEventListener("click", () => {
-      const v = SYNC.gist;
-      if (navigator.clipboard) navigator.clipboard.writeText(v);
-      c.textContent = "Copied";
-      setTimeout(() => { c.textContent = "Copy"; }, 1600);
-    });
-  }, 60);
+    const d = document.getElementById("kDate"), day = document.getElementById("kDay");
+    const showDay = () => { day.textContent = d.value ? DAYS[new Date(d.value + "T00:00:00").getDay()] : ""; };
+    d.addEventListener("change", showDay); showDay();
+    const ics = document.getElementById("icsBtn");
+    if(ics) ics.addEventListener("click", () => downloadICS(task));
+  }, 40);
 }
-document.getElementById("syncBtn").addEventListener("click", openSyncSheet);
 
-/* pull again whenever you come back to the app */
-document.addEventListener("visibilitychange", () => { if (!document.hidden) doPull(true); });
+/* ============================ calendar export ============================ */
+function pad2(n){ return String(n).padStart(2,"0"); }
+function icsStamp(d){ return d.getUTCFullYear()+pad2(d.getUTCMonth()+1)+pad2(d.getUTCDate())+"T"+pad2(d.getUTCHours())+pad2(d.getUTCMinutes())+"00Z"; }
+function icsEsc(x){ return String(x).replace(/\\/g,"\\\\").replace(/([,;])/g,"\\$1").replace(/\n/g,"\\n"); }
+function vevent(t){
+  const L = ["BEGIN:VEVENT","UID:"+t.id+"@tracker","DTSTAMP:"+icsStamp(new Date())];
+  if(t.time){
+    const [h,m] = t.time.split(":");
+    L.push("DTSTART:"+t.date.replace(/-/g,"")+"T"+h+m+"00", "DURATION:PT30M");
+  } else {
+    L.push("DTSTART;VALUE=DATE:"+t.date.replace(/-/g,""));
+  }
+  L.push("SUMMARY:"+icsEsc(t.title));
+  if(t.notes) L.push("DESCRIPTION:"+icsEsc(t.notes));
+  (t.reminders||[]).forEach(m => {
+    L.push("BEGIN:VALARM",
+      "TRIGGER:"+(m === 0 ? "PT0M" : "-PT"+(m>=1440 ? (m/1440)+"D" : m>=60 ? (m/60)+"H" : m+"M")),
+      "ACTION:DISPLAY","DESCRIPTION:"+icsEsc(t.title),"END:VALARM");
+  });
+  L.push("END:VEVENT");
+  return L;
+}
+function saveICS(lines, name){
+  const blob = new Blob([lines.join("\r\n")], { type:"text/calendar" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name.replace(/[^a-z0-9]+/gi,"-").toLowerCase().slice(0,40) + ".ics";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function downloadICS(t){
+  if(!t.date){ alert("Give the task a date first."); return; }
+  saveICS(["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tracker//EN","CALSCALE:GREGORIAN", ...vevent(t), "END:VCALENDAR"], t.title);
+  logIt('Exported "' + t.title + '" to calendar'); save();
+}
+
+/* ============================ reminders ============================ */
+let notifMsg = "Off";
+function notifState(){
+  if(!("Notification" in window)) return { kind:"off", msg:"Not supported" };
+  if(Notification.permission === "granted") return { kind:"on", msg:"On" };
+  if(Notification.permission === "denied") return { kind:"err", msg:"Blocked" };
+  return { kind:"", msg:"Off" };
+}
+function notifSet(){
+  const st = notifState(); notifMsg = st.msg;
+  const b = document.getElementById("bNotif"), tool = document.getElementById("btnNotif");
+  if(b) b.className = "badge" + (st.kind ? " " + st.kind : "");
+  if(tool) tool.classList.toggle("live", st.kind === "on");
+  const row = document.getElementById("mNotifStatus"); if(row) row.textContent = st.msg;
+}
+async function askNotif(){
+  if(!("Notification" in window)) return;
+  if(Notification.permission === "granted"){ new Notification("Tracker", { body:"Reminders are working." }); return; }
+  if(Notification.permission === "denied"){
+    openSheet("Reminders blocked",
+      "Safari remembers a refusal, and there is no way to re-ask from inside the page.",
+      '<p class="hint">On iPhone: Settings → Apps → Safari → Advanced → Website Data, find this site, swipe to delete, then reload and allow. On a Mac: Safari → Settings → Websites → Notifications.' +
+      '<br><br>Either way, iOS will not fire reminders while the app is closed. Open any task with a date and use <b>Add to calendar</b> for reminders that actually arrive.</p>', null);
+    return;
+  }
+  const p = await Notification.requestPermission();
+  notifSet(); logIt("Notification permission: " + p); save();
+}
+
+function tick(){
+  if(!("Notification" in window) || Notification.permission !== "granted") return;
+  const now = Date.now();
+  let changed = false;
+  S.tasks.forEach(t => {
+    if(t.done || !t.date || !t.reminders || !t.reminders.length) return;
+    const due = dueDate(t); if(!due) return;
+    t.reminders.forEach(m => {
+      const at = due.getTime() - m*60000;
+      const key = t.id + ":" + t.date + t.time + ":" + m;
+      if(S.fired[key]) return;
+      if(at <= now && now - at < 3600000){
+        const tab = S.tabs.find(x => x.id === t.tabId);
+        new Notification(t.title, { body: (m === 0 ? "Due now" : "Due in " + (REMINDERS.find(r=>r.v===m)||{l:m+" min"}).l) + (tab ? " · " + tab.name : ""), tag: key });
+        S.fired[key] = now; changed = true;
+        logIt('Reminder fired for "' + t.title + '"');
+      }
+    });
+  });
+  if(changed) save();
+}
+setInterval(tick, 30000);
+
+/* ============================ menu ============================ */
+const IC = {
+  gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>',
+  bell:'<svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+  sync:'<svg viewBox="0 0 24 24"><path d="M21 3v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 21v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>',
+  clock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.4 2"/></svg>',
+  cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>',
+  trash:'<svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>'
+};
+
+function menuRow(icon, label, status, hot){
+  return '<button class="mrow' + (hot ? " hot" : "") + '" data-go="' + label + '">' +
+    '<span class="ic">' + icon + '</span>' +
+    '<span class="lab"><b>' + label + '</b><span' + (status && status.id ? ' id="' + status.id + '"' : '') + '>' + esc(status && status.text || "") + '</span></span>' +
+    '<span class="chev">›</span></button>';
+}
+
+function openMenu(){
+  const st = notifState();
+  openSheet("Options", "",
+    menuRow(IC.gear,  "Settings",  { text:"Title and intro" }) +
+    menuRow(IC.bell,  "Reminders", { text: st.msg, id:"mNotifStatus" }, st.kind === "on") +
+    menuRow(IC.sync,  "Sync",      { text: syncMsg, id:"mSyncStatus" }, SYNC.on) +
+    menuRow(IC.cal,   "Export calendar", { text:"Every dated task as .ics" }) +
+    menuRow(IC.clock, "History",   { text:"Everything that happened" }) +
+    menuRow(IC.trash, "Erase everything", { text:"Cannot be undone" }),
+    null);
+  setTimeout(() => {
+    sheet.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => {
+      const k = b.dataset.go;
+      if(k === "Settings") openSettings();
+      else if(k === "Reminders") askNotif();
+      else if(k === "Sync") openSyncSheet();
+      else if(k === "Export calendar") exportAll();
+      else if(k === "History") openHistory();
+      else if(k === "Erase everything") openWipe();
+    }));
+  }, 40);
+}
+
+function openHistory(){
+  openSheet("History", S.log.length + " entr" + (S.log.length === 1 ? "y" : "ies") + " · newest first",
+    '<div class="log">' + logHTML() + '</div>', null);
+}
+
+function openSettings(){
+  openSheet("Settings", "Names shown at the top of the app.",
+    '<div class="field"><label for="sEye">Small label</label><input id="sEye" type="text" value="' + esc(S.eyebrow) + '" /></div>' +
+    '<div class="field"><label for="sTitle">Title</label><input id="sTitle" type="text" value="' + esc(S.title) + '" /></div>' +
+    '<div class="field"><label for="sIntro">Intro line</label><textarea id="sIntro">' + esc(S.intro) + '</textarea></div>',
+    () => {
+      S.eyebrow = document.getElementById("sEye").value.trim() || "Tracker";
+      S.title   = document.getElementById("sTitle").value.trim() || "Tracker";
+      S.intro   = document.getElementById("sIntro").value.trim();
+      closeSheet(); commit("Updated settings");
+    });
+}
+
+function openWipe(){
+  openSheet("Erase everything", "Every tab, task and log entry on this device — and in the synced store if sync is on.",
+    '<p class="hint">There is no undo. If you only want a clean slate for one area, delete that tab instead.</p>',
+    null, '<button class="danger" id="wipe">Erase everything</button>');
+  setTimeout(() => {
+    const w = document.getElementById("wipe");
+    if(w) w.addEventListener("click", () => armed(w, "Tap again to erase", async () => {
+      S = EMPTY(); S.updatedAt = Date.now();
+      const id = uid(); S.tabs = [{ id, name:"Today", note:"", createdAt: Date.now() }]; S.activeTab = id;
+      closeSheet(); render();
+      await store.set(KEY, JSON.stringify(S)); schedulePush();
+    }));
+  }, 40);
+}
+
+function exportAll(){
+  const dated = S.tasks.filter(t => t.date && !t.done);
+  if(!dated.length){ openSheet("Nothing to export", "", '<p class="hint">No open tasks have a date yet.</p>', null); return; }
+  const L = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tracker//EN","CALSCALE:GREGORIAN"];
+  dated.forEach(t => L.push(...vevent(t)));
+  L.push("END:VCALENDAR");
+  saveICS(L, "tracker-" + new Date().toISOString().slice(0,10));
+  logIt("Exported " + dated.length + " task" + (dated.length===1?"":"s") + " to calendar"); save();
+  closeSheet();
+}
+
+function openSyncSheet(){
+  const on = SYNC.on;
+  openSheet(on ? "Sync" : "Set up sync",
+    on ? "Your data lives in a secret GitHub Gist. Use the same token and store ID on every device."
+       : "Keep every device in step by storing the data in a secret GitHub Gist.",
+    '<p class="hint"><b>One-time setup.</b> Fastest route: open ' +
+      '<a href="https://github.com/settings/personal-access-tokens/new?name=Tracker+sync&amp;gists=write&amp;expires_in=366" target="_blank" rel="noopener" style="color:var(--accent)">this pre-filled link</a>' +
+      ' and press Generate token. Or by hand:' +
+      '<ol><li>Settings → Developer settings → <b>Fine-grained tokens</b></li>' +
+      '<li>Resource owner must be <b>your own account</b></li>' +
+      '<li>Account permissions → <b>Gists</b> → <b>Write</b></li></ol></p>' +
+    '<div class="field"><label for="gTok">GitHub token</label><input id="gTok" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false" value="' + esc(SYNC.token) + '" /></div>' +
+    '<div class="field"><label for="gId">Store ID — empty creates a new one</label><input id="gId" type="text" autocomplete="off" spellcheck="false" value="' + esc(SYNC.gist) + '" /></div>' +
+    (on ? '<div class="field"><label>Paste this on your other devices</label><div class="idbox"><code>' + esc(SYNC.gist) + '</code><button type="button" id="cpId">Copy</button></div></div>' : '') +
+    '<p class="hint" id="gMsg"></p>',
+    async () => {
+      const msg = document.getElementById("gMsg");
+      const tok = document.getElementById("gTok").value.trim();
+      const gid = document.getElementById("gId").value.trim();
+      if(!tok){ document.getElementById("gTok").focus(); return; }
+      SYNC.token = tok; msg.textContent = "Connecting…";
+      try{
+        if(gid){
+          SYNC.gist = gid;
+          const r = await SYNC.pull();
+          if(r && (r.updatedAt||0) > (S.updatedAt||0)){ S = norm(r); await store.set(KEY, JSON.stringify(S)); }
+          else await SYNC.push(S);
+        } else { S.updatedAt = Date.now(); SYNC.gist = await SYNC.create(S); }
+        lastSynced = Date.now(); closeSheet(); render(); syncIdle();
+        logIt("Sync connected"); save();
+      }catch(e){ msg.textContent = "Failed: " + (e.message || e) + ". Check the Gists permission is set to Write."; }
+    });
+  setTimeout(() => {
+    const c = document.getElementById("cpId");
+    if(c) c.addEventListener("click", () => { if(navigator.clipboard) navigator.clipboard.writeText(SYNC.gist); c.textContent = "Copied"; setTimeout(()=>c.textContent="Copy",1500); });
+  }, 40);
+}
+
+document.getElementById("btnMenu").addEventListener("click", openMenu);
+document.getElementById("btnLog").addEventListener("click", openHistory);
+document.getElementById("btnNotif").addEventListener("click", askNotif);
+document.getElementById("btnSync").addEventListener("click", openSyncSheet);
+
+document.getElementById("fab").addEventListener("click", () => openTaskSheet(null));
+document.addEventListener("visibilitychange", () => { if(!document.hidden){ doPull(true); tick(); } });
 window.addEventListener("online", () => doPull(true));
 
+/* ============================ boot ============================ */
 (async function boot(){
-  try { const raw = await store.get(KEY); if (raw) S = normalize(JSON.parse(raw)); }
-  catch(e){}
-  noteEl.textContent = "";
-  render();
-  if (SYNC.on) { document.getElementById("syncBtn").textContent = "Sync"; await doPull(); }
+  try{ const raw = await store.get(KEY); if(raw) S = norm(JSON.parse(raw)); }catch(e){}
+  if(!S.tabs.length){
+    const id = uid();
+    S.tabs = [{ id, name:"Today", note:"", createdAt: Date.now() }];
+    S.activeTab = id;
+    logIt("Created first tab");
+  }
+  render(); notifSet(); tick();
+  if(SYNC.on){ await doPull(); }
   else syncIdle();
 })();
-render();
 </script>
 </body>
 </html>

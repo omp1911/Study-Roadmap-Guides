@@ -1,0 +1,181 @@
+name: de-practice
+
+# ONE container: Python, JavaScript, TypeScript, Spark, a browser IDE, notebooks.
+#
+#   IDE        http://localhost:8443     VS Code in the browser
+#   Notebooks  http://localhost:8888     JupyterLab — Python, JS and TS kernels
+#
+# ADDING LIBRARIES — you never edit this file for that:
+#   Python  → add a line to requirements.txt   then  docker compose restart lab
+#   JS/TS   → add to package.json dependencies then  docker compose restart lab
+#
+# Start:  docker compose up -d          Shell:  docker compose exec lab bash
+# Stop:   docker compose stop           Wipe:   docker compose down -v
+#
+# Nothing here ever touches your files. /work is your folder on disk — notebooks,
+# databases and code survive restart, rebuild, down -v, and deleting the image.
+
+services:
+
+  lab:
+    image: python:3.11-bookworm
+    container_name: de-lab
+    working_dir: /work
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      # 127.0.0.1 on purpose: your browser can reach these, the network cannot.
+      - "127.0.0.1:8443:8443"   # code-server (IDE)
+      - "127.0.0.1:8888:8888"   # JupyterLab
+      - "127.0.0.1:5173:5173"   # Vite / any JS dev server
+      - "127.0.0.1:8000:8000"   # spare
+    environment:
+      PATH: /opt/venv/bin:/opt/tools/bin:/work/node_modules/.bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPATH: /work
+      TZ: America/Toronto
+      PYSPARK_PYTHON: /opt/venv/bin/python
+      PYSPARK_DRIVER_PYTHON: /opt/venv/bin/python
+      SPARK_LOCAL_IP: 127.0.0.1
+      JAVA_TOOL_OPTIONS: -Xss4m
+      NPM_CONFIG_PREFIX: /opt/tools
+      npm_config_fund: "false"
+      npm_config_audit: "false"
+      # IDE extensions installed on first start. Add ids here if you want more.
+      EXTENSIONS: >-
+        ms-python.python
+        ms-toolsai.jupyter
+        dbaeumer.vscode-eslint
+        esbenp.prettier-vscode
+        mtxr.sqltools
+        redhat.vscode-yaml
+    volumes:
+      - ./:/work                                    # your files. the only thing that matters.
+      - venv:/opt/venv                              # python packages
+      - tools:/opt/tools                            # node globals + code-server
+      - pip-cache:/root/.cache/pip
+      - npm-cache:/root/.npm
+      - ide-state:/root/.local/share/code-server     # IDE settings, extensions, history
+    command:
+      - bash
+      - -lc
+      - |
+        set -e
+
+        # ---- system: Java for Spark, Node for JS/TS -------------------------
+        if ! command -v java > /dev/null || ! command -v node > /dev/null; then
+          echo "[lab] installing Java and Node ..."
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            default-jre-headless nodejs npm curl git procps less > /dev/null
+        fi
+
+        # ---- python: everything comes from requirements.txt ------------------
+        if [ ! -x /opt/venv/bin/python ]; then
+          echo "[lab] creating virtualenv ..."
+          python -m venv /opt/venv
+          /opt/venv/bin/pip install --quiet --upgrade pip
+        fi
+        if [ -f /work/requirements.txt ]; then
+          echo "[lab] syncing Python libraries from requirements.txt ..."
+          /opt/venv/bin/pip install --quiet -r /work/requirements.txt
+        else
+          echo "[lab] WARNING: no requirements.txt found next to docker-compose.yml"
+        fi
+
+        # ---- javascript / typescript ----------------------------------------
+        if [ ! -x /opt/tools/bin/tsx ]; then
+          echo "[lab] installing global JS toolchain ..."
+          npm install -g --silent typescript tsx ts-node tslab > /dev/null
+          /opt/tools/bin/tslab install --python=/opt/venv/bin/python || true
+        fi
+        if [ -f /work/package.json ]; then
+          echo "[lab] syncing JS libraries from package.json ..."
+          (cd /work && npm install --silent --no-fund --no-audit) || \
+            echo "[lab] npm install failed — check package.json"
+        fi
+
+        # ---- browser IDE -----------------------------------------------------
+        if [ ! -x /opt/tools/bin/code-server ]; then
+          echo "[lab] installing code-server ..."
+          curl -fsSL https://code-server.dev/install.sh \
+            | sh -s -- --method=standalone --prefix=/opt/tools > /dev/null
+          for ext in $EXTENSIONS; do
+            echo "[lab] extension: $ext"
+            /opt/tools/bin/code-server --install-extension "$ext" > /dev/null 2>&1 || \
+              echo "[lab]   (unavailable, skipped)"
+          done
+        fi
+
+        # ---- first-run scaffolding (never overwrites your work) --------------
+        if [ ! -f /work/tsconfig.json ]; then
+          echo "[lab] creating TypeScript project ..."
+          mkdir -p /work/ts
+          cat > /work/tsconfig.json <<'TSC'
+        {
+          "compilerOptions": {
+            "target": "ES2022",
+            "module": "ESNext",
+            "moduleResolution": "bundler",
+            "lib": ["ES2022", "DOM"],
+            "types": ["node"],
+            "strict": true,
+            "noUncheckedIndexedAccess": true,
+            "noEmit": true,
+            "skipLibCheck": true,
+            "resolveJsonModule": true,
+            "allowJs": true
+          },
+          "include": ["ts/**/*", "*.ts"]
+        }
+        TSC
+          [ -f /work/ts/index.ts ] || cat > /work/ts/index.ts <<'TS'
+        // npm run dev   → re-runs this file on every save
+        // npm run check → type-check without running
+        const rows: { id: number; name: string }[] = [
+          { id: 1, name: "Ana" },
+          { id: 2, name: "Ben" },
+        ];
+        console.log(rows.map((r) => r.name.toUpperCase()));
+        TS
+        fi
+
+        mkdir -p /work/.vscode
+        if [ ! -f /work/.vscode/settings.json ]; then
+          cat > /work/.vscode/settings.json <<'VS'
+        {
+          "python.defaultInterpreterPath": "/opt/venv/bin/python",
+          "python.terminal.activateEnvironment": false,
+          "python.testing.pytestEnabled": true,
+          "python.testing.pytestArgs": ["."],
+          "editor.formatOnSave": true,
+          "editor.rulers": [88],
+          "files.exclude": { "**/__pycache__": true, "**/.pytest_cache": true },
+          "terminal.integrated.defaultProfile.linux": "bash",
+          "workbench.startupEditor": "none",
+          "explorer.confirmDelete": false
+        }
+        VS
+        fi
+
+        # ---- run ------------------------------------------------------------
+        /opt/tools/bin/code-server --bind-addr 0.0.0.0:8443 --auth none /work &
+        /opt/venv/bin/jupyter lab --ip 0.0.0.0 --port 8888 --no-browser --allow-root \
+          --ServerApp.token='' --ServerApp.password='' --ServerApp.root_dir=/work &
+
+        echo ""
+        echo "[lab] READY"
+        echo "        IDE        http://localhost:8443"
+        echo "        Notebooks  http://localhost:8888"
+        echo "        Shell      docker compose exec lab bash"
+        echo ""
+        wait
+
+volumes:
+  venv:
+  tools:
+  pip-cache:
+  npm-cache:
+  ide-state:

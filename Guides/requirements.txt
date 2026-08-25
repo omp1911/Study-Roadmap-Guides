@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  PYTHON LIBRARIES
+#
+#  Add a line, then run:   docker compose restart lab
+#  Takes about 20 seconds. Your files, notebooks and databases are untouched.
+#
+#  Pin a version when you care:   pandas==2.2.2
+#  Leave it unpinned when you don't:   pandas
+# ─────────────────────────────────────────────────────────────────────────────
+
+# --- data ---------------------------------------------------------------------
+duckdb
+pandas
+pyarrow
+matplotlib
+
+# --- spark (guide 3, levels 12+) ----------------------------------------------
+pyspark==3.5.1
+chispa
+
+# --- testing (guide 3) --------------------------------------------------------
+pytest
+pytest-asyncio
+pytest-cov
+freezegun
+
+# --- async and http (guide 2) -------------------------------------------------
+httpx
+aiosqlite
+
+# --- notebooks and tooling ----------------------------------------------------
+jupyterlab
+ipykernel
+ruff
+
+# --- your libraries -----------------------------------------------------------
+# Add below this line. A few you may well want:
+#
+# polars
+# sqlalchemy
+# psycopg2-binary
+# requests
+# scikit-learn
+# seaborn
+# great-expectations
+# python-dotenv

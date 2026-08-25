@@ -272,6 +272,37 @@
   .no  { border: 1px solid var(--line); background: none; color: var(--fg-2); }
   .yes { border: 0; background: var(--accent); color: var(--bg); }
 
+  /* ---------- sync ---------- */
+  .sync { margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line-2); }
+  .sync-row { display: flex; align-items: center; gap: 12px; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--fg-4); flex: 0 0 auto; transition: background .25s ease; }
+  .sync-dot.on   { background: var(--accent); }
+  .sync-dot.busy { background: var(--fg-2); }
+  .sync-dot.err  { background: #C0392B; }
+  .sync-txt { font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3); }
+  .sync-btn {
+    margin-left: auto; padding: 7px 15px; border: 1px solid var(--line); border-radius: 999px;
+    background: none; cursor: pointer;
+    font: inherit; font-size: 10.5px; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--fg-3); transition: all .18s ease;
+  }
+  .sync-btn:hover { border-color: var(--accent-2); color: var(--accent); }
+
+  .hint { margin: 0 0 18px; font-size: 13px; font-weight: 300; line-height: 1.6; color: var(--fg-3); }
+  .hint b { font-weight: 600; color: var(--fg-2); }
+  .hint ol { margin: 10px 0 0; padding-left: 18px; }
+  .hint li { margin-bottom: 5px; }
+  .idbox {
+    display: flex; align-items: center; gap: 10px; margin-top: 6px;
+    padding: 11px 13px; border: 1px solid var(--line); border-radius: 6px;
+  }
+  .idbox code { flex: 1; min-width: 0; font-size: 12.5px; color: var(--fg-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .idbox button {
+    flex: 0 0 auto; padding: 5px 11px; border: 0; border-radius: 999px; cursor: pointer;
+    background: var(--accent); color: var(--bg);
+    font: inherit; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  }
+
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
 </style>
 </head>
@@ -303,6 +334,14 @@
     <div class="rule"><b>02</b><p><strong>Slip the chain, don't compress it.</strong> If one module starts three weeks late, everything after moves three weeks. Squeezing a module to protect a date is how two things get done badly instead of one done well.</p></div>
     <div class="rule"><b>03</b><p><strong>Finish before you start.</strong> Oweless is the test. It's nearly done and unshipped, and it gates the certification deliberately.</p></div>
     <div class="rule"><b>04</b><p><strong>Anything you add lands in a module.</strong> New work has to say which phase it belongs to. That's the defence against the list quietly growing back.</p></div>
+  </section>
+
+  <section class="sync">
+    <div class="sync-row">
+      <span class="sync-dot" id="syncDot"></span>
+      <span class="sync-txt" id="syncTxt">Local only</span>
+      <button class="sync-btn" id="syncBtn">Set up sync</button>
+    </div>
   </section>
 
   <footer>
@@ -373,13 +412,119 @@ const BASE = [
 ];
 
 const KEY = "roadmap-v4";
-let S = { done:{}, custom:[], modules:[], deleted:{}, open:{} };
+let S = { done:{}, custom:[], modules:[], deleted:{}, open:{}, updatedAt:0 };
 
-const store = {
-  async get(k){ if (window.storage){ const r = await window.storage.get(k); return r ? r.value : null; } return localStorage.getItem(k); },
-  async set(k,v){ if (window.storage){ await window.storage.set(k,v); return; } localStorage.setItem(k,v); },
-  async del(k){ if (window.storage){ await window.storage.delete(k); return; } localStorage.removeItem(k); }
+/* ---- local cache: Claude storage when present, else localStorage, else memory ---- */
+const mem = {};
+const ls = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return mem[k] ?? null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){ mem[k] = v; } },
+  del(k){ try { localStorage.removeItem(k); } catch(e){ delete mem[k]; } }
 };
+const store = {
+  async get(k){ if (window.storage){ try { const r = await window.storage.get(k); return r ? r.value : null; } catch(e){ return null; } } return ls.get(k); },
+  async set(k,v){ if (window.storage){ try { await window.storage.set(k,v); } catch(e){} return; } ls.set(k,v); },
+  async del(k){ if (window.storage){ try { await window.storage.delete(k); } catch(e){} return; } ls.del(k); }
+};
+
+/* ---- cross-device sync via a secret GitHub Gist ---- */
+const FILE = "roadmap.json";
+const SYNC = {
+  get token(){ return ls.get("gh_token") || ""; },
+  set token(v){ v ? ls.set("gh_token", v) : ls.del("gh_token"); },
+  get gist(){ return ls.get("gh_gist") || ""; },
+  set gist(v){ v ? ls.set("gh_gist", v) : ls.del("gh_gist"); },
+  get on(){ return !!(this.token && this.gist); },
+  head(){ return {
+    "Authorization": "Bearer " + this.token,
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+    "Content-Type": "application/json"
+  }; },
+  async create(state){
+    const r = await fetch("https://api.github.com/gists", {
+      method: "POST", headers: this.head(),
+      body: JSON.stringify({
+        description: "Execution Order — tracker state",
+        public: false,
+        files: { [FILE]: { content: JSON.stringify(state, null, 2) } }
+      })
+    });
+    if (!r.ok) throw new Error("create failed (" + r.status + ")");
+    const j = await r.json();
+    return j.id;
+  },
+  async pull(){
+    const r = await fetch("https://api.github.com/gists/" + this.gist + "?t=" + Date.now(), {
+      headers: this.head(), cache: "no-store"
+    });
+    if (!r.ok) throw new Error("pull failed (" + r.status + ")");
+    const j = await r.json();
+    const f = j.files && j.files[FILE];
+    if (!f) return null;
+    let text = f.content;
+    if (f.truncated && f.raw_url) text = await (await fetch(f.raw_url, { cache: "no-store" })).text();
+    try { return JSON.parse(text); } catch(e){ return null; }
+  },
+  async push(state){
+    const r = await fetch("https://api.github.com/gists/" + this.gist, {
+      method: "PATCH", headers: this.head(),
+      body: JSON.stringify({ files: { [FILE]: { content: JSON.stringify(state, null, 2) } } })
+    });
+    if (!r.ok) throw new Error("push failed (" + r.status + ")");
+    return true;
+  }
+};
+
+const EMPTY = () => ({ done:{}, custom:[], modules:[], deleted:{}, open:{}, updatedAt:0 });
+const normalize = o => Object.assign(EMPTY(), o || {});
+
+const dotEl = () => document.getElementById("syncDot");
+const txtEl = () => document.getElementById("syncTxt");
+let lastSynced = 0;
+
+function syncState(kind, msg){
+  const d = dotEl(), t = txtEl();
+  if (!d || !t) return;
+  d.className = "sync-dot" + (kind ? " " + kind : "");
+  t.textContent = msg;
+}
+function syncIdle(){
+  if (!SYNC.on) { syncState("", "Local only"); return; }
+  if (!lastSynced) { syncState("on", "Synced"); return; }
+  const s = Math.round((Date.now() - lastSynced) / 1000);
+  syncState("on", s < 60 ? "Synced just now" : "Synced " + Math.round(s/60) + "m ago");
+}
+
+let pushTimer = null;
+function schedulePush(){
+  if (!SYNC.on) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(doPush, 1200);
+}
+async function doPush(){
+  if (!SYNC.on) return;
+  syncState("busy", "Saving to GitHub");
+  try { await SYNC.push(S); lastSynced = Date.now(); syncIdle(); }
+  catch(e){ syncState("err", String(e.message || e)); }
+}
+async function doPull(quiet){
+  if (!SYNC.on) return;
+  if (!quiet) syncState("busy", "Checking GitHub");
+  try {
+    const remote = await SYNC.pull();
+    if (remote && (remote.updatedAt || 0) > (S.updatedAt || 0)) {
+      S = normalize(remote);
+      render();
+      await store.set(KEY, JSON.stringify(S));
+      lastSynced = Date.now(); syncState("on", "Updated from GitHub");
+      setTimeout(syncIdle, 2500);
+      return;
+    }
+    if (remote && (S.updatedAt || 0) > (remote.updatedAt || 0)) { await doPush(); return; }
+    lastSynced = Date.now(); syncIdle();
+  } catch(e){ syncState("err", String(e.message || e)); }
+}
 
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid = () => "u"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -472,8 +617,10 @@ function render(){
 }
 
 async function save(){
+  S.updatedAt = Date.now();
   try { await store.set(KEY, JSON.stringify(S)); noteEl.textContent = "Saved"; }
   catch(e){ noteEl.textContent = "Session only"; }
+  schedulePush();
 }
 function toggle(id){ S.done[id] = !S.done[id]; render(); save(); }
 
@@ -545,18 +692,99 @@ document.getElementById("addModule").addEventListener("click", () => {
 
 document.getElementById("reset").addEventListener("click", e => {
   armed(e.currentTarget, "Erase all", async () => {
-    S = { done:{}, custom:[], modules:[], deleted:{}, open:{} };
+    S = EMPTY();
+    S.updatedAt = Date.now();
     render();
-    try { await store.del(KEY); noteEl.textContent = "Reset"; }
+    try { await store.set(KEY, JSON.stringify(S)); noteEl.textContent = "Reset"; }
     catch(err){ noteEl.textContent = "Cleared"; }
+    schedulePush();
   });
 });
 
+/* ---------- sync setup sheet ---------- */
+function openSyncSheet(){
+  const connected = SYNC.on;
+  const idBlock = connected
+    ? '<div class="field"><label>Store ID — paste this on your other devices</label>' +
+      '<div class="idbox"><code id="gistId">' + esc(SYNC.gist) + '</code>' +
+      '<button type="button" id="copyId">Copy</button></div></div>'
+    : '';
+
+  openSheet(
+    connected ? "Sync" : "Set up sync",
+    connected
+      ? "Your tracker is stored in a secret GitHub Gist. Paste the same token and store ID on any other device to keep them in step."
+      : "The tracker can keep itself in step across your laptop and phone by storing its state in a secret GitHub Gist.",
+    '<p class="hint"><b>One-time setup on GitHub.</b> Fastest route: open ' +
+      '<a href="https://github.com/settings/personal-access-tokens/new?name=Execution+Order+sync&amp;gists=write&amp;expires_in=366" target="_blank" rel="noopener" style="color:var(--accent)">this pre-filled link</a>' +
+      ' and press Generate token. Or by hand:' +
+      '<ol>' +
+        '<li>Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b></li>' +
+        '<li>Generate new token. Set an expiry you can live with.</li>' +
+        '<li>Resource owner must be <b>your own account</b>, not an organisation.</li>' +
+        '<li>Repository access: <b>Public repositories</b> is fine — this does not touch repos.</li>' +
+        '<li>Account permissions → <b>Gists</b> → <b>Write</b>. That is the only one.</li>' +
+        '<li>Generate, copy the token, paste it below.</li>' +
+      '</ol></p>' +
+    '<div class="field"><label for="fTok">GitHub token</label>' +
+      '<input id="fTok" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false" value="' + esc(SYNC.token) + '" /></div>' +
+    '<div class="field"><label for="fGist">Store ID — leave empty to create a new one</label>' +
+      '<input id="fGist" type="text" placeholder="creates a new secret gist" autocomplete="off" spellcheck="false" value="' + esc(SYNC.gist) + '" /></div>' +
+    idBlock +
+    '<p class="hint" id="syncMsg"></p>',
+    async () => {
+      const msg = document.getElementById("syncMsg");
+      const tok = document.getElementById("fTok").value.trim();
+      const gid = document.getElementById("fGist").value.trim();
+      if (!tok) { document.getElementById("fTok").focus(); return; }
+
+      SYNC.token = tok;
+      msg.textContent = "Connecting…";
+      try {
+        if (gid) {
+          SYNC.gist = gid;
+          const remote = await SYNC.pull();
+          if (remote && (remote.updatedAt || 0) > (S.updatedAt || 0)) {
+            S = normalize(remote);
+            await store.set(KEY, JSON.stringify(S));
+          } else {
+            await SYNC.push(S);
+          }
+        } else {
+          S.updatedAt = Date.now();
+          SYNC.gist = await SYNC.create(S);
+        }
+        lastSynced = Date.now();
+        closeSheet(); render(); syncIdle();
+        noteEl.textContent = "Sync on";
+      } catch(e) {
+        msg.textContent = "Failed: " + (e.message || e) + ". Check the token has the Gists permission set to Write.";
+      }
+    });
+
+  setTimeout(() => {
+    const c = document.getElementById("copyId");
+    if (c) c.addEventListener("click", () => {
+      const v = SYNC.gist;
+      if (navigator.clipboard) navigator.clipboard.writeText(v);
+      c.textContent = "Copied";
+      setTimeout(() => { c.textContent = "Copy"; }, 1600);
+    });
+  }, 60);
+}
+document.getElementById("syncBtn").addEventListener("click", openSyncSheet);
+
+/* pull again whenever you come back to the app */
+document.addEventListener("visibilitychange", () => { if (!document.hidden) doPull(true); });
+window.addEventListener("online", () => doPull(true));
+
 (async function boot(){
-  try { const raw = await store.get(KEY); if (raw) S = Object.assign({done:{},custom:[],modules:[],deleted:{},open:{}}, JSON.parse(raw)); }
+  try { const raw = await store.get(KEY); if (raw) S = normalize(JSON.parse(raw)); }
   catch(e){}
   noteEl.textContent = "";
   render();
+  if (SYNC.on) { document.getElementById("syncBtn").textContent = "Sync"; await doPull(); }
+  else syncIdle();
 })();
 render();
 </script>

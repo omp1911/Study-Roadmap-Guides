@@ -16,6 +16,7 @@ Do this once. Every other guide assumes it's finished and starts at concept 1.
 | **IDE** | `http://localhost:8443` | Everything. Real VS Code — editor, file tree, terminal, notebooks, debugger. |
 | **Notebooks** | `http://localhost:8888` | JupyterLab, if you prefer it to the IDE's notebook view. |
 | **Shell** | `docker compose exec lab bash` | When you'd rather type than click. |
+| **dbt docs** | `http://localhost:8080` | Guide 6's lineage graph, once you run `dbt docs serve`. |
 
 Three doors, one room. Same files, same Python, same Node.
 
@@ -39,8 +40,9 @@ Three doors, one room. Same files, same Python, same Node.
 | 5 | [JavaScript and TypeScript](#5-javascript-and-typescript) | A real TS project with watch mode and type-checking |
 | 6 | [Seed the toy shop database](#6-seed-the-toy-shop-database) | `shop.duckdb` for guide 1 |
 | 7 | [Create the etl-practice project](#7-create-the-etl-practice-project) | The layout guide 3 tests against |
-| 8 | [Daily commands](#8-daily-commands) | The handful you'll actually use |
-| 9 | [Troubleshooting](#9-troubleshooting) | Fixes for the things that go wrong |
+| 8 | [The warehouse and dbt](#8-the-warehouse-and-dbt) | Landing files for guides 5 and 6 |
+| 9 | [Daily commands](#9-daily-commands) | The handful you'll actually use |
+| 10 | [Troubleshooting](#10-troubleshooting) | Fixes for the things that go wrong |
 
 ---
 
@@ -57,7 +59,9 @@ de-practice/
 ├── 01-data-modelling.md
 ├── 02-python-async-regex-patterns.md
 ├── 03-pytest-for-etl.md
-└── 04-foundry-osdk-marketplace.md
+├── 04-foundry-osdk-marketplace.md
+├── 05-medallion-architecture.md
+└── 06-dbt-basics.md
 ```
 
 ```bash
@@ -317,7 +321,47 @@ Then open the IDE's testing sidebar. Once guide 3 has you writing tests, they ap
 
 ---
 
-## 8. Daily commands
+## 8. The warehouse and dbt
+
+Guides 5 and 6 build a warehouse from three CSV files that the container creates on first start:
+
+```
+warehouse/landing/sales_2026-08-01.csv     3 lines
+warehouse/landing/sales_2026-08-02.csv     2 lines
+warehouse/landing/sales_2026-08-03.csv     2 lines  ← one is a re-sent copy of R-002
+                                           ───────
+                                           7 lines, 6 real sale lines
+```
+
+That deliberate duplicate is what makes deduplication, idempotency and late-arriving data real rather than theoretical. Both guides depend on it.
+
+### Check it
+
+```bash
+python -c "
+import duckdb
+print(duckdb.connect().sql('''
+  SELECT count(*) AS lines,
+         count(DISTINCT (receipt_no, toy_name)) AS real_lines
+  FROM read_csv(\"/work/warehouse/landing/*.csv\", header=true)'''))"
+# 7 | 6
+```
+
+**dbt is already installed and already configured to find its profile.** `DBT_PROFILES_DIR` points at `/work/dbt`, so you never pass `--profiles-dir`:
+
+```bash
+dbt --version          # should list duckdb under "Plugins"
+```
+
+Guide 6 has you write `/work/dbt/profiles.yml` and the project itself — that's concept 2, and doing it by hand once is worth more than having it appear.
+
+> **Trap.** `dbt docs serve` binds to `127.0.0.1` inside the container, where your browser can't reach it. Run it as `dbt docs serve --port 8080 --host 0.0.0.0`; port 8080 is published for exactly this.
+
+The warehouse file itself, `warehouse.duckdb`, gets created by the guides. Delete it any time you want to start over — the landing CSVs are the source of truth and they're regenerated if you delete those too.
+
+---
+
+## 9. Daily commands
 
 On your laptop, in the folder with `docker-compose.yml`:
 
@@ -335,7 +379,7 @@ On your laptop, in the folder with `docker-compose.yml`:
 
 ---
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 
 | Symptom | Cause and fix |
 |---|---|
@@ -352,6 +396,8 @@ On your laptop, in the folder with `docker-compose.yml`:
 | `port is already allocated` | Something else holds it. Change the left number in `ports:` — `127.0.0.1:8444:8443`. |
 | Dev server unreachable in the browser | It bound to `127.0.0.1` inside the container. Restart it with `--host 0.0.0.0`. |
 | IDE lost your settings | You ran `down -v`. Settings live in the `ide-state` volume; plain `down` keeps them. |
+| `Could not find profile named 'toyshop'` | `profile:` in `dbt_project.yml` must match the top key in `profiles.yml`. Usually a typo in one of the two. |
+| `dbt docs serve` unreachable | Add `--host 0.0.0.0 --port 8080`. |
 | Everything is subtly broken | `docker compose down -v && docker compose up -d`. Genuinely a clean slate, and your files are fine. |
 
 ---
@@ -364,5 +410,7 @@ On your laptop, in the folder with `docker-compose.yml`:
 | [02 — Async, Regex, DE Patterns](02-python-async-regex-patterns.md) | Concurrency, pattern matching, and everyday Python for pipelines |
 | [03 — pytest for ETL](03-pytest-for-etl.md) | Fixtures, mocking, Spark tests, and the bugs they catch |
 | [04 — Foundry OSDK & Marketplace](04-foundry-osdk-marketplace.md) | Run this one in your own Foundry workspace |
+| [05 — Medallion Architecture](05-medallion-architecture.md) | Bronze, silver, gold: building a warehouse in layers |
+| [06 — dbt Basics](06-dbt-basics.md) | models, ref, tests, seeds, snapshots, lineage |
 
 Guide 1 first if you're doing all of them — guide 3's levels on fan-out and SCD2 assume its concepts 9 and 10.
